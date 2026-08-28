@@ -27,12 +27,27 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Prepare Complete Android Project
+        run: |
+          mkdir -p /tmp/backup
+          cp flutter_app/lib/main.dart /tmp/backup/main.dart
+          cp flutter_app/pubspec.yaml /tmp/backup/pubspec.yaml
+          
+          cd flutter_app
+          flutter create --org world.ka2 --project-name ka2_heaven --platforms android --empty .
+          
+          cp /tmp/backup/main.dart lib/main.dart
+          cp /tmp/backup/pubspec.yaml pubspec.yaml
+
+          # Add WebRTC, Camera, Mic and Storage permissions to AndroidManifest
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <uses-permission android:name="android.permission.CAMERA"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>\n    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>\n    <uses-permission android:name="android.permission.WAKE_LOCK"/>' android/app/src/main/AndroidManifest.xml
+
       - name: Fetch Flutter Dependencies
         run: flutter pub get
         working-directory: ./flutter_app
 
       - name: Build Android Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
         working-directory: ./flutter_app
 
       - name: Copy & Rename APK
