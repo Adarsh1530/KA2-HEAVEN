@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="kaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9B5CFF" />
+      <stop offset="50%" stop-color="#FF4F81" />
+      <stop offset="100%" stop-color="#FF91B5" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="22" fill="#07070C" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+  <text x="22" y="65" font-family="'Inter', sans-serif" font-weight="800" font-size="44" fill="url(#kaGrad)" letter-spacing="-1">KA</text>
+  <text x="73" y="38" font-family="'Inter', sans-serif" font-weight="700" font-size="24" fill="#FF91B5">²</text>
+</svg>

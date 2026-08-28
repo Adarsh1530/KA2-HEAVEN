@@ -1,0 +1,35 @@
+{
+  "name": "KA² — HEAVEN",
+  "short_name": "KA²",
+  "description": "A Heaven Made for Two. Where It’s Just Us. ❤️",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070C",
+  "theme_color": "#07070C",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Chat with Anu",
+      "short_name": "Chat",
+      "description": "Open private chat",
+      "url": "/?tab=chat",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Our Memories",
+      "short_name": "Memories",
+      "description": "View shared moments",
+      "url": "/?tab=memories",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    }
+  ]
+}

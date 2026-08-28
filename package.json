@@ -1,0 +1,32 @@
+{
+  "name": "ka2-heaven",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KA² — HEAVEN: Private Couple Communication, Realtime, Secure, Romantic, Cinematic 3D App",
+  "workspaces": [
+    "shared",
+    "backend",
+    "mobile",
+    "admin"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "build:shared": "npm --workspace=shared run build",
+    "build:backend": "npm --workspace=backend run build",
+    "build:mobile": "npm --workspace=mobile run build",
+    "build:admin": "npm --workspace=admin run build",
+    "build": "npm run build:shared && npm run build:backend && npm run build:mobile && npm run build:admin",
+    "dev:backend": "npm --workspace=backend run dev",
+    "dev:mobile": "npm --workspace=mobile run dev",
+    "dev:admin": "npm --workspace=admin run dev",
+    "dev": "concurrently -n \"BACKEND,MOBILE,ADMIN\" -c \"blue,magenta,cyan\" \"npm run dev:backend\" \"npm run dev:mobile\" \"npm run dev:admin\"",
+    "test": "npm --workspace=backend run test",
+    "start": "npm --workspace=backend run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
