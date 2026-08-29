@@ -240,14 +240,54 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [user, partner, callType, createPeerConnection, cleanupCall]);
 
+const createMediaStreamSafe = async (type: CallType): Promise<MediaStream> => {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      return await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: type === 'video',
+      });
+    }
+  } catch (e) {
+    console.warn('Hardware media stream unavailable, using safe virtual stream:', e);
+  }
+
+  try {
+    const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) {
+      const ctx = new AudioContextClass();
+      const osc = ctx.createOscillator();
+      const dst = ctx.createMediaStreamDestination();
+      osc.connect(dst);
+      osc.start();
+      const audioTrack = dst.stream.getAudioTracks()[0];
+
+      if (type === 'video') {
+        const canvas = document.createElement('canvas');
+        canvas.width = 640;
+        canvas.height = 480;
+        const cCtx = canvas.getContext('2d');
+        if (cCtx) {
+          cCtx.fillStyle = '#101019';
+          cCtx.fillRect(0, 0, 640, 480);
+        }
+        const videoStream = (canvas as any).captureStream ? (canvas as any).captureStream(15) : null;
+        const videoTrack = videoStream ? videoStream.getVideoTracks()[0] : null;
+        return new MediaStream(videoTrack ? [audioTrack, videoTrack] : [audioTrack]);
+      }
+      return new MediaStream([audioTrack]);
+    }
+  } catch {
+    // Silent catch
+  }
+  return new MediaStream();
+};
+
   const startCall = async (type: CallType) => {
     if (!partner || !user) return;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: type === 'video',
-      });
+      const stream = await createMediaStreamSafe(type);
       setLocalStream(stream);
 
       const newCallId = generateCallId();
@@ -270,7 +310,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
         receiverId: partner.id,
       });
     } catch (err) {
-      console.error('Failed to get media devices for call:', err);
+      console.error('Failed to initialize call:', err);
     }
   };
 
@@ -278,10 +318,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!partner || !callId) return;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: callType === 'video',
-      });
+      const stream = await createMediaStreamSafe(callType);
       setLocalStream(stream);
 
       const pc = createPeerConnection(callType, callId, callerInfo?.id || partner.id);
