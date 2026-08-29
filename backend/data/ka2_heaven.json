@@ -10,8 +10,8 @@
       "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces",
       "bio": "Architect of our digital universe. Forever yours, Anu ❤️",
       "pinHash": "$2b$10$Pt6wpODlIOy3atszN17GI.WR9.90zJkqmhgWAC97dOBJFGvQ1Th2m",
-      "presenceStatus": "online",
-      "lastActive": "2026-08-29T02:48:57.716Z",
+      "presenceStatus": "offline",
+      "lastActive": "2026-08-29T03:41:03.760Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
       "updatedAt": "2026-08-28T13:21:15.605Z"
     },
@@ -26,7 +26,7 @@
       "bio": "My heart, my home, my Keerthi. In our private Heaven ✨",
       "pinHash": "$2b$10$Pt6wpODlIOy3atszN17GI.WR9.90zJkqmhgWAC97dOBJFGvQ1Th2m",
       "presenceStatus": "online",
-      "lastActive": "2026-08-29T02:48:57.814Z",
+      "lastActive": "2026-08-29T03:44:54.057Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
       "updatedAt": "2026-08-28T13:21:15.605Z"
     }
@@ -139,6 +139,42 @@
       "refreshTokenHash": "$2b$10$h0m4FFlUXzoyx6tjlGrsyuwx7BJMkQr.c53MFdxCV6TIlQYlRw78i",
       "lastActive": "2026-08-29T02:48:57.814Z",
       "createdAt": "2026-08-29T02:48:57.814Z"
+    },
+    {
+      "id": "0b532c01-ce4a-4b0a-b031-4c93bd5da3f6",
+      "userId": "b2222222-2222-2222-2222-222222222222",
+      "deviceName": "Desktop Browser",
+      "deviceType": "web",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "isActive": true,
+      "refreshTokenHash": "$2b$10$HnzKny/mAll8dMESuBMluOJu/DF5Drzdf0rm0qKeMaf59G2YXh6i2",
+      "lastActive": "2026-08-29T03:30:14.463Z",
+      "createdAt": "2026-08-29T03:30:14.463Z"
+    },
+    {
+      "id": "de6d5233-0dec-4b65-8077-0f688e5501d3",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "deviceName": "Desktop Browser",
+      "deviceType": "web",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "isActive": true,
+      "refreshTokenHash": "$2b$10$Cv44vzTJM3/1XrX8hHqMEOedBSxEZa.3F.NvWNf357mjIQBzTGC.6",
+      "lastActive": "2026-08-29T03:30:20.884Z",
+      "createdAt": "2026-08-29T03:30:20.884Z"
+    },
+    {
+      "id": "7356969a-c10c-4bee-8f54-2e2367ea0079",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "deviceName": "Admin Web Console",
+      "deviceType": "web",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "isActive": true,
+      "refreshTokenHash": "$2b$10$BBXdJkTNcUG8.q/3JGpWieikRLTIgsPJEtJVx6Yb.uDydo07vl7Jq",
+      "lastActive": "2026-08-29T03:31:38.786Z",
+      "createdAt": "2026-08-29T03:31:38.786Z"
     }
   ],
   "messages": [
@@ -198,7 +234,7 @@
       "type": "text",
       "isEdited": false,
       "isDeleted": false,
-      "status": "sent",
+      "status": "read",
       "createdAt": "2026-08-28T13:24:45.765Z",
       "updatedAt": "2026-08-28T13:24:45.765Z"
     },
@@ -589,6 +625,36 @@
     "maxUploadSizeMB": 50
   },
   "auditLogs": [
+    {
+      "id": "7d8d2039-5952-487e-a967-db73e4b6895a",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "userEmail": "keerthi@ka2heaven.local",
+      "action": "USER_LOGIN",
+      "details": "Successful login from Admin Web Console (web)",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-29T03:31:38.786Z"
+    },
+    {
+      "id": "b963cdb6-e5a9-4b47-aa81-8ceef0683f8a",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "userEmail": "keerthi@ka2heaven.local",
+      "action": "USER_LOGIN",
+      "details": "Successful login from Desktop Browser (web)",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-29T03:30:20.884Z"
+    },
+    {
+      "id": "0bff46e2-a0d9-4d3f-8739-7cb5ec36fa41",
+      "userId": "b2222222-2222-2222-2222-222222222222",
+      "userEmail": "anu@ka2heaven.local",
+      "action": "USER_LOGIN",
+      "details": "Successful login from Desktop Browser (web)",
+      "ipAddress": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
+      "createdAt": "2026-08-29T03:30:14.463Z"
+    },
     {
       "id": "17a2cb8d-7784-45bb-80c3-27c7655a842b",
       "userId": "b2222222-2222-2222-2222-222222222222",
