@@ -14,4 +14,11 @@ router.get('/audit-logs', AdminController.getAuditLogs);
 router.get('/devices', AdminController.getAllDevices);
 router.delete('/devices/:deviceId', AdminController.revokeDevice);
 
+// Data Maintenance & Backups
+router.post('/clear-data', AdminController.clearData);
+router.get('/backup/export', AdminController.exportBackup);
+router.post('/backup/restore', AdminController.restoreBackup);
+router.get('/backup/config', AdminController.getBackupConfig);
+router.put('/backup/config', AdminController.updateBackupConfig);
+
 export default router;

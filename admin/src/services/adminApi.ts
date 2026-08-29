@@ -1,4 +1,13 @@
-import { AdminTelemetry, AppSettings, AuditLog, DeviceSession, INITIAL_APP_SETTINGS } from '@ka2/shared';
+import {
+  AdminTelemetry,
+  AppSettings,
+  AuditLog,
+  DeviceSession,
+  INITIAL_APP_SETTINGS,
+  BackupConfig,
+  FullBackupSnapshot,
+  ClearDataPayload,
+} from '@ka2/shared';
 
 const getAdminApiBase = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
@@ -10,6 +19,24 @@ const getAdminApiBase = () => {
     return '/api';
   }
   return 'http://localhost:5000/api';
+};
+
+const DEFAULT_BACKUP_CONFIG: BackupConfig = {
+  autoBackupSchedule: 'daily',
+  lastBackupTimestamp: new Date().toISOString(),
+  backupRetentionCount: 10,
+  recentSnapshots: [
+    {
+      id: 'snap-1',
+      name: `Auto Snapshot — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
+      createdAt: new Date().toISOString(),
+      sizeBytes: 42500,
+      messagesCount: 42,
+      memoriesCount: 8,
+      vaultItemsCount: 6,
+      loveNotesCount: 4,
+    },
+  ],
 };
 
 class AdminApiService {
@@ -62,25 +89,25 @@ class AdminApiService {
     if (endpoint.includes('/auth/login')) {
       return {
         user: {
-          id: '11111111-1111-1111-1111-111111111111',
+          id: 'a1111111-1111-1111-1111-111111111111',
           email: 'keerthi@ka2heaven.local',
           name: 'Keerthi Adarsh',
           role: 'admin',
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
         },
-        tokens: { accessToken: 'admin_token_keerthi' }
+        tokens: { accessToken: 'admin_token_keerthi' },
       } as any;
     }
 
     if (endpoint.includes('/auth/me')) {
       return {
         user: {
-          id: '11111111-1111-1111-1111-111111111111',
+          id: 'a1111111-1111-1111-1111-111111111111',
           email: 'keerthi@ka2heaven.local',
           name: 'Keerthi Adarsh',
           role: 'admin',
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
-        }
+        },
       } as any;
     }
 
@@ -98,7 +125,7 @@ class AdminApiService {
           memoryUsageMB: 48,
           cpuLoadPercent: 4,
           databaseStatus: 'connected',
-        }
+        },
       } as any;
     }
 
@@ -113,6 +140,66 @@ class AdminApiService {
       }
     }
 
+    if (endpoint.includes('/admin/clear-data') && method === 'POST') {
+      const { target } = body;
+      if (target === 'all' || !target) {
+        localStorage.removeItem('ka2_messages');
+        localStorage.removeItem('ka2_memories');
+        localStorage.removeItem('ka2_vault_items');
+        localStorage.removeItem('ka2_love_notes');
+      } else if (target === 'messages') {
+        localStorage.removeItem('ka2_messages');
+      } else if (target === 'memories') {
+        localStorage.removeItem('ka2_memories');
+      } else if (target === 'vault') {
+        localStorage.removeItem('ka2_vault_items');
+      } else if (target === 'loveNotes') {
+        localStorage.removeItem('ka2_love_notes');
+      }
+      return { success: true, message: 'Data cleared successfully from local storage.' } as any;
+    }
+
+    if (endpoint.includes('/admin/backup/export')) {
+      const snapshot: FullBackupSnapshot = {
+        version: '1.0.0',
+        exportedAt: new Date().toISOString(),
+        checksum: `sha256_${Date.now()}`,
+        data: {
+          messages: JSON.parse(localStorage.getItem('ka2_messages') || '[]'),
+          memories: JSON.parse(localStorage.getItem('ka2_memories') || '[]'),
+          loveNotes: JSON.parse(localStorage.getItem('ka2_love_notes') || '[]'),
+          vaultItems: JSON.parse(localStorage.getItem('ka2_vault_items') || '[]'),
+          timelineMilestones: [],
+          appSettings: JSON.parse(localStorage.getItem('ka2_settings') || JSON.stringify(INITIAL_APP_SETTINGS)),
+          backupConfig: JSON.parse(localStorage.getItem('ka2_backup_config') || JSON.stringify(DEFAULT_BACKUP_CONFIG)),
+        },
+      };
+      return snapshot as any;
+    }
+
+    if (endpoint.includes('/admin/backup/restore') && method === 'POST') {
+      const { data: imp } = body;
+      if (imp) {
+        if (imp.messages) localStorage.setItem('ka2_messages', JSON.stringify(imp.messages));
+        if (imp.memories) localStorage.setItem('ka2_memories', JSON.stringify(imp.memories));
+        if (imp.vaultItems) localStorage.setItem('ka2_vault_items', JSON.stringify(imp.vaultItems));
+        if (imp.loveNotes) localStorage.setItem('ka2_love_notes', JSON.stringify(imp.loveNotes));
+        if (imp.appSettings) localStorage.setItem('ka2_settings', JSON.stringify(imp.appSettings));
+      }
+      return { success: true, message: 'Backup restored to local storage successfully.' } as any;
+    }
+
+    if (endpoint.includes('/admin/backup/config')) {
+      if (method === 'GET') {
+        const stored = localStorage.getItem('ka2_backup_config');
+        return { config: stored ? JSON.parse(stored) : DEFAULT_BACKUP_CONFIG } as any;
+      }
+      if (method === 'PUT') {
+        localStorage.setItem('ka2_backup_config', JSON.stringify(body));
+        return { config: body, success: true } as any;
+      }
+    }
+
     if (endpoint.includes('/admin/audit-logs')) {
       return {
         logs: [
@@ -121,18 +208,10 @@ class AdminApiService {
             action: 'VAULT_PIN_VERIFIED',
             userEmail: 'keerthi@ka2heaven.local',
             ipAddress: '127.0.0.1',
-            userAgent: navigator.userAgent,
+            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Browser',
             createdAt: new Date().toISOString(),
           },
-          {
-            id: 'log-2',
-            action: 'SESSION_INITIALIZED',
-            userEmail: 'anu@ka2heaven.local',
-            ipAddress: '127.0.0.1',
-            userAgent: navigator.userAgent,
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-          }
-        ]
+        ],
       } as any;
     }
 
@@ -141,8 +220,8 @@ class AdminApiService {
         devices: [
           {
             id: 'dev-1',
-            userId: '11111111-1111-1111-1111-111111111111',
-            deviceName: 'Keerthi Phone (Android 14)',
+            userId: 'a1111111-1111-1111-1111-111111111111',
+            deviceName: 'Keerthi Device (Android / Web)',
             deviceType: 'mobile',
             ipAddress: '127.0.0.1',
             userAgent: 'Chrome Mobile / KA² Android',
@@ -150,18 +229,7 @@ class AdminApiService {
             lastActive: new Date().toISOString(),
             createdAt: '2026-08-28T00:00:00.000Z',
           },
-          {
-            id: 'dev-2',
-            userId: '22222222-2222-2222-2222-222222222222',
-            deviceName: 'Anu Phone (iOS 18)',
-            deviceType: 'mobile',
-            ipAddress: '127.0.0.1',
-            userAgent: 'Safari / KA² iOS',
-            isCurrent: false,
-            lastActive: new Date().toISOString(),
-            createdAt: '2026-08-28T00:00:00.000Z',
-          }
-        ]
+        ],
       } as any;
     }
 
@@ -208,6 +276,39 @@ class AdminApiService {
   public async revokeDevice(deviceId: string): Promise<void> {
     await this.request(`/admin/devices/${deviceId}`, { method: 'DELETE' });
   }
+
+  // --- MAINTENANCE & BACKUPS ---
+  public async clearData(payload: ClearDataPayload): Promise<{ success: boolean; message: string }> {
+    return this.request('/admin/clear-data', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public async exportBackup(): Promise<FullBackupSnapshot> {
+    return this.request('/admin/backup/export');
+  }
+
+  public async restoreBackup(snapshot: FullBackupSnapshot): Promise<any> {
+    return this.request('/admin/backup/restore', {
+      method: 'POST',
+      body: JSON.stringify(snapshot),
+    });
+  }
+
+  public async getBackupConfig(): Promise<BackupConfig> {
+    const data = await this.request('/admin/backup/config');
+    return data.config;
+  }
+
+  public async updateBackupConfig(config: Partial<BackupConfig>): Promise<BackupConfig> {
+    const data = await this.request('/admin/backup/config', {
+      method: 'PUT',
+      body: JSON.stringify(config),
+    });
+    return data.config;
+  }
 }
 
 export const adminApi = new AdminApiService();
+

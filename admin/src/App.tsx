@@ -6,6 +6,7 @@ import { DashboardOverview } from './pages/DashboardOverview';
 import { ThemeCustomizer } from './pages/ThemeCustomizer';
 import { DeviceManagement } from './pages/DeviceManagement';
 import { AuditLogs } from './pages/AuditLogs';
+import { DataMaintenance } from './pages/DataMaintenance';
 import { AdminLogin } from './pages/AdminLogin';
 
 export const App: React.FC = () => {
@@ -69,6 +70,7 @@ export const App: React.FC = () => {
           {activeTab === 'customizer' && <ThemeCustomizer />}
           {activeTab === 'devices' && <DeviceManagement />}
           {activeTab === 'audit' && <AuditLogs />}
+          {activeTab === 'maintenance' && <DataMaintenance />}
         </main>
       </div>
     </div>

@@ -258,3 +258,45 @@ export interface AdminTelemetry {
   cpuLoadPercent: number;
   databaseStatus: 'connected' | 'degraded' | 'error';
 }
+
+export type AutoBackupSchedule = 'disabled' | 'hourly' | 'daily' | 'weekly' | 'monthly';
+
+export interface BackupSnapshotMetadata {
+  id: string;
+  name: string;
+  createdAt: string;
+  sizeBytes: number;
+  messagesCount: number;
+  memoriesCount: number;
+  vaultItemsCount: number;
+  loveNotesCount: number;
+}
+
+export interface BackupConfig {
+  autoBackupSchedule: AutoBackupSchedule;
+  lastBackupTimestamp?: string;
+  backupRetentionCount: number;
+  recentSnapshots: BackupSnapshotMetadata[];
+}
+
+export interface ClearDataPayload {
+  pin: string;
+  confirmationPhrase: string;
+  target: 'all' | 'messages' | 'memories' | 'vault' | 'loveNotes' | 'calls';
+}
+
+export interface FullBackupSnapshot {
+  version: string;
+  exportedAt: string;
+  checksum?: string;
+  data: {
+    messages: Message[];
+    memories: MemoryItem[];
+    loveNotes: LoveNoteItem[];
+    vaultItems: VaultItem[];
+    timelineMilestones: TimelineMilestone[];
+    appSettings: AppSettings;
+    backupConfig: BackupConfig;
+  };
+}
+

@@ -7,9 +7,10 @@ import {
   ExternalLink,
   LogOut,
   ShieldCheck,
+  Database,
 } from 'lucide-react';
 
-export type AdminTab = 'overview' | 'customizer' | 'devices' | 'audit';
+export type AdminTab = 'overview' | 'customizer' | 'devices' | 'audit' | 'maintenance';
 
 interface SidebarProps {
   activeTab: AdminTab;
@@ -23,6 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onLogo
     { id: 'customizer', label: 'Theme & Branding', icon: Palette },
     { id: 'devices', label: 'Device Sessions', icon: Smartphone },
     { id: 'audit', label: 'Audit Logs', icon: History },
+    { id: 'maintenance', label: 'Data & Backups', icon: Database },
   ];
 
   return (
@@ -66,10 +68,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onLogo
       {/* Footer / Mobile App link & Logout */}
       <div className="space-y-2 pt-4 border-t border-white/10">
         <a
-          href="http://localhost:5173"
+          href={
+            typeof window !== 'undefined' && window.location.port === '5174'
+              ? `http://${window.location.hostname || 'localhost'}:5173`
+              : '/'
+          }
           target="_blank"
           rel="noreferrer"
-          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-white transition-colors"
+          className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-white transition-colors cursor-pointer"
         >
           <span>Open Mobile App</span>
           <ExternalLink className="w-3.5 h-3.5 text-[#FF91B5]" />
