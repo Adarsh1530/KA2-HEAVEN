@@ -60,6 +60,13 @@ export const ChatView: React.FC = () => {
 
   useEffect(() => {
     fetchMessages();
+    const handleSync = () => fetchMessages();
+    window.addEventListener('ka2_data_cleared', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('ka2_data_cleared', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, []);
 
   const scrollToBottom = () => {

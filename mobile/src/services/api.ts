@@ -138,34 +138,8 @@ class ClientEngine {
   }
 
   public getMessages(): Message[] {
-    return this.getStorage('messages', [
-      {
-        id: 'msg-1',
-        senderId: KEERTHI_ID,
-        receiverId: ANU_ID,
-        content: 'Welcome to our private Heaven, my love! KA² is finally ready just for us ❤️',
-        type: 'text',
-        reactions: [{ id: 'r-1', messageId: 'msg-1', userId: ANU_ID, emoji: '❤️', createdAt: new Date().toISOString() }],
-        isEdited: false,
-        isDeleted: false,
-        status: 'read',
-        createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-        updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-      },
-      {
-        id: 'msg-2',
-        senderId: ANU_ID,
-        receiverId: KEERTHI_ID,
-        content: 'Keerthi, it looks breathtaking! A heaven made for two... I love you so much ❤️✨',
-        type: 'text',
-        reactions: [{ id: 'r-2', messageId: 'msg-2', userId: KEERTHI_ID, emoji: '😍', createdAt: new Date().toISOString() }],
-        isEdited: false,
-        isDeleted: false,
-        status: 'read',
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        updatedAt: new Date(Date.now() - 3600000).toISOString(),
-      }
-    ]);
+    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
+    return this.getStorage('messages', isWiped ? [] : []);
   }
 
   public saveMessages(msgs: Message[]) {
@@ -173,7 +147,8 @@ class ClientEngine {
   }
 
   public getMemories(): MemoryItem[] {
-    return this.getStorage('memories', INITIAL_MEMORIES);
+    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
+    return this.getStorage('memories', isWiped ? [] : []);
   }
 
   public saveMemories(mems: MemoryItem[]) {
@@ -181,7 +156,8 @@ class ClientEngine {
   }
 
   public getLoveNotes(): LoveNoteItem[] {
-    return this.getStorage('love_notes', INITIAL_LOVE_NOTES);
+    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
+    return this.getStorage('love_notes', isWiped ? [] : []);
   }
 
   public saveLoveNotes(notes: LoveNoteItem[]) {
@@ -209,6 +185,40 @@ class ClientEngine {
   public deleteVaultItem(itemId: string) {
     const all = this.getStorage<VaultItem[]>('vault_items', []);
     this.setStorage('vault_items', all.filter(i => i.id !== itemId));
+  }
+
+  public clearAllData(target = 'all') {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ka2_data_cleared', 'true');
+      if (target === 'all' || !target) {
+        localStorage.setItem('ka2_messages', '[]');
+        localStorage.setItem('ka2_memories', '[]');
+        localStorage.setItem('ka2_vault_items', '[]');
+        localStorage.setItem('ka2_love_notes', '[]');
+      } else if (target === 'messages') {
+        localStorage.setItem('ka2_messages', '[]');
+      } else if (target === 'memories') {
+        localStorage.setItem('ka2_memories', '[]');
+      } else if (target === 'vault') {
+        localStorage.setItem('ka2_vault_items', '[]');
+      } else if (target === 'loveNotes') {
+        localStorage.setItem('ka2_love_notes', '[]');
+      }
+    }
+    if (typeof sessionStorage !== 'undefined') {
+      if (target === 'all' || !target) {
+        sessionStorage.setItem('ka2_messages', '[]');
+        sessionStorage.setItem('ka2_memories', '[]');
+        sessionStorage.setItem('ka2_vault_items', '[]');
+        sessionStorage.setItem('ka2_love_notes', '[]');
+      }
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new Event('ka2_data_cleared'));
+        localStorage.setItem('ka2_last_wipe', Date.now().toString());
+      } catch {}
+    }
   }
 
   public getSettings(): AppSettings {
@@ -671,6 +681,11 @@ class ApiService {
       } as any;
     }
 
+    if (endpoint.includes('/admin/clear-data') && method === 'POST') {
+      clientEngine.clearAllData(body.target || 'all');
+      return { success: true, message: 'All couple data wiped cleanly from storage.' } as any;
+    }
+
     if (endpoint.includes('/admin/settings')) {
       if (method === 'GET') {
         return { settings: clientEngine.getSettings() } as any;
@@ -692,6 +707,7 @@ class ApiService {
       const apiBase = getApiBase();
       const formData = new FormData();
       formData.append('file', file);
+      const headers: Record<string, string> = {};
       const token = this.getAccessToken();
       if (token) headers['Authorization'] = `Bearer ${token}`;
 

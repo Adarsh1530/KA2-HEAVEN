@@ -54,6 +54,13 @@ export const MemoriesView: React.FC = () => {
 
   useEffect(() => {
     fetchMemories();
+    const handleSync = () => fetchMemories();
+    window.addEventListener('ka2_data_cleared', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('ka2_data_cleared', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, [activeCategory]);
 
   const handleToggleFavorite = async (memoryId: string) => {

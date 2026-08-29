@@ -62,6 +62,15 @@ export const VaultView: React.FC = () => {
     if (isUnlocked) {
       fetchVaultItems();
     }
+    const handleSync = () => {
+      if (isUnlocked) fetchVaultItems();
+    };
+    window.addEventListener('ka2_data_cleared', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('ka2_data_cleared', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, [vaultType, isUnlocked]);
 
   const handleUnlock = async (e: React.FormEvent) => {
