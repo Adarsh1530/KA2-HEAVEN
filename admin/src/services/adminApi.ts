@@ -25,18 +25,7 @@ const DEFAULT_BACKUP_CONFIG: BackupConfig = {
   autoBackupSchedule: 'daily',
   lastBackupTimestamp: new Date().toISOString(),
   backupRetentionCount: 10,
-  recentSnapshots: [
-    {
-      id: 'snap-1',
-      name: `Auto Snapshot — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
-      createdAt: new Date().toISOString(),
-      sizeBytes: 42500,
-      messagesCount: 42,
-      memoriesCount: 8,
-      vaultItemsCount: 6,
-      loveNotesCount: 4,
-    },
-  ],
+  recentSnapshots: [],
 };
 
 class AdminApiService {
@@ -112,18 +101,21 @@ class AdminApiService {
     }
 
     if (endpoint.includes('/admin/telemetry')) {
+      const msgs = JSON.parse(localStorage.getItem('ka2_messages') || '[]');
+      const mems = JSON.parse(localStorage.getItem('ka2_memories') || '[]');
+      const vaults = JSON.parse(localStorage.getItem('ka2_vault_items') || '[]');
       return {
         telemetry: {
-          uptimeSeconds: 86400 * 3,
+          uptimeSeconds: 86400,
           activeSockets: 2,
           onlineUsers: { keerthi: true, anu: true },
           activeCallsCount: 0,
-          totalMessagesCount: 42,
-          totalMemoriesCount: 8,
-          totalVaultItemsCount: 6,
-          totalStorageBytes: 15485760,
-          memoryUsageMB: 48,
-          cpuLoadPercent: 4,
+          totalMessagesCount: msgs.length,
+          totalMemoriesCount: mems.length,
+          totalVaultItemsCount: vaults.length,
+          totalStorageBytes: (JSON.stringify(mems).length + JSON.stringify(msgs).length + JSON.stringify(vaults).length),
+          memoryUsageMB: 24,
+          cpuLoadPercent: 2,
           databaseStatus: 'connected',
         },
       } as any;

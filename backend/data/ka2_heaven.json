@@ -11,7 +11,7 @@
       "bio": "Architect of our digital universe. Forever yours, Anu ❤️",
       "pinHash": "$2b$10$Pt6wpODlIOy3atszN17GI.WR9.90zJkqmhgWAC97dOBJFGvQ1Th2m",
       "presenceStatus": "online",
-      "lastActive": "2026-08-29T03:53:22.688Z",
+      "lastActive": "2026-08-29T04:13:54.931Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
       "updatedAt": "2026-08-28T13:21:15.605Z"
     },
@@ -26,244 +26,40 @@
       "bio": "My heart, my home, my Keerthi. In our private Heaven ✨",
       "pinHash": "$2b$10$Pt6wpODlIOy3atszN17GI.WR9.90zJkqmhgWAC97dOBJFGvQ1Th2m",
       "presenceStatus": "online",
-      "lastActive": "2026-08-29T03:53:22.780Z",
+      "lastActive": "2026-08-29T04:13:55.018Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
       "updatedAt": "2026-08-28T13:21:15.605Z"
     }
   ],
   "devices": [
     {
-      "id": "39a74f5e-033e-4dff-9879-6e1b6cba24e6",
+      "id": "51a489f4-8348-467e-989b-736dbf0ea808",
       "userId": "a1111111-1111-1111-1111-111111111111",
       "deviceName": "Keerthi iPhone 16 Pro",
       "deviceType": "ios",
       "ipAddress": "::ffff:127.0.0.1",
       "userAgent": "Unknown Client",
       "isActive": true,
-      "refreshTokenHash": "$2b$10$rGpsIk5BLCurO0TG/kalEu3R6Dtk7THJuBzb4xZd5iDlAcfBQ6z5m",
-      "lastActive": "2026-08-28T13:21:15.854Z",
-      "createdAt": "2026-08-28T13:21:15.854Z"
+      "refreshTokenHash": "$2b$10$v.mCK9tMs19UsZc9oj1VR.YeMkuJXVx9YrXq3SNZ0Dd05an8KGPn2",
+      "lastActive": "2026-08-29T04:13:54.931Z",
+      "createdAt": "2026-08-29T04:13:54.931Z"
     },
     {
-      "id": "5fa3a3ba-b457-4073-9fb4-1347dc7c66d7",
+      "id": "2a46e9fa-4865-48c2-af87-789c3bf524c2",
       "userId": "b2222222-2222-2222-2222-222222222222",
       "deviceName": "Anu iPhone 15",
       "deviceType": "ios",
       "ipAddress": "::ffff:127.0.0.1",
       "userAgent": "Unknown Client",
       "isActive": true,
-      "refreshTokenHash": "$2b$10$9NJxamXnbyvOD6zYLIJAzeOCiRz1aX7EsyIwjQVeTzIAXlTWnVoOi",
-      "lastActive": "2026-08-28T13:21:15.942Z",
-      "createdAt": "2026-08-28T13:21:15.942Z"
-    },
-    {
-      "id": "81f6c744-50a1-4103-8b5b-6270987ef517",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Desktop Browser",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$BpSwzeM5Qd8fhW2zKAbEjuvrG0DVTc3DXg0T9jrpSWjMfXlvbUC7C",
-      "lastActive": "2026-08-28T13:23:53.521Z",
-      "createdAt": "2026-08-28T13:23:53.521Z"
-    },
-    {
-      "id": "fb3bdd02-7789-4896-a25a-722a49f8165c",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "deviceName": "Desktop Browser",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$bA.jmxMQ8XcIKSWfZ8e3NO/6qsp0U0hGoH/phbvKYx9MuLTS70j9W",
-      "lastActive": "2026-08-28T13:24:30.377Z",
-      "createdAt": "2026-08-28T13:24:30.377Z"
-    },
-    {
-      "id": "6643edb9-5624-4c82-9316-aa7859008efa",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Admin Web Console",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$WM7/wA/SyXqrS/ofKFhBEODXvXtzePCUD/RlVpNMvpWUR3yt4fkyK",
-      "lastActive": "2026-08-28T13:24:54.051Z",
-      "createdAt": "2026-08-28T13:24:54.051Z"
-    },
-    {
-      "id": "f90b92e1-db58-46ad-a576-6e66389f0a84",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "KA² Device",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "node",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$UfXWkvqwr72kSOqBPWW.b.u59LZq2MP8tpqR0ceosnQdsa4PzKOFO",
-      "lastActive": "2026-08-29T02:48:32.240Z",
-      "createdAt": "2026-08-29T02:48:32.241Z"
-    },
-    {
-      "id": "b44f2b29-72b1-4694-b9cb-cd8ba76af10a",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "deviceName": "KA² Device",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "node",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$Owkm7ZtVSyDg9x4VBsYt9eYFL6QKn6JlUNuqNO7Q3SN..ttdc0/yS",
-      "lastActive": "2026-08-29T02:48:32.330Z",
-      "createdAt": "2026-08-29T02:48:32.330Z"
-    },
-    {
-      "id": "1d131d4c-4f8f-45b1-b9a6-9a9b9da7614c",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Keerthi iPhone 16 Pro",
-      "deviceType": "ios",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$AgY9GqUrW6VlO/Q3GxwqMuaiQP4cSGVQs7Xv1j3WRt/VPzg.06ROS",
-      "lastActive": "2026-08-29T02:48:57.716Z",
-      "createdAt": "2026-08-29T02:48:57.716Z"
-    },
-    {
-      "id": "3eb3c771-2ca0-4c98-8548-7ef9e4fd9220",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "deviceName": "Anu iPhone 15",
-      "deviceType": "ios",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$h0m4FFlUXzoyx6tjlGrsyuwx7BJMkQr.c53MFdxCV6TIlQYlRw78i",
-      "lastActive": "2026-08-29T02:48:57.814Z",
-      "createdAt": "2026-08-29T02:48:57.814Z"
-    },
-    {
-      "id": "0b532c01-ce4a-4b0a-b031-4c93bd5da3f6",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "deviceName": "Desktop Browser",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$HnzKny/mAll8dMESuBMluOJu/DF5Drzdf0rm0qKeMaf59G2YXh6i2",
-      "lastActive": "2026-08-29T03:30:14.463Z",
-      "createdAt": "2026-08-29T03:30:14.463Z"
-    },
-    {
-      "id": "de6d5233-0dec-4b65-8077-0f688e5501d3",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Desktop Browser",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$Cv44vzTJM3/1XrX8hHqMEOedBSxEZa.3F.NvWNf357mjIQBzTGC.6",
-      "lastActive": "2026-08-29T03:30:20.884Z",
-      "createdAt": "2026-08-29T03:30:20.884Z"
-    },
-    {
-      "id": "7356969a-c10c-4bee-8f54-2e2367ea0079",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Admin Web Console",
-      "deviceType": "web",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$BBXdJkTNcUG8.q/3JGpWieikRLTIgsPJEtJVx6Yb.uDydo07vl7Jq",
-      "lastActive": "2026-08-29T03:31:38.786Z",
-      "createdAt": "2026-08-29T03:31:38.786Z"
-    },
-    {
-      "id": "3e2528c0-5754-462b-895e-106a7ae1f39e",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "deviceName": "Keerthi iPhone 16 Pro",
-      "deviceType": "ios",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$uR5m/UaOePS8PfVKzSRU1OYmNumPkaSLGOvaOP2wy2MJZ/.t1G/Mu",
-      "lastActive": "2026-08-29T03:53:22.688Z",
-      "createdAt": "2026-08-29T03:53:22.688Z"
-    },
-    {
-      "id": "3026a545-a3ee-4aa6-8aad-dcd7f759c902",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "deviceName": "Anu iPhone 15",
-      "deviceType": "ios",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "isActive": true,
-      "refreshTokenHash": "$2b$10$SVFZmfQrNXnHd0hajq.lCO9BQrE3mrul0CVL4y5.POgYDGAYuHjlq",
-      "lastActive": "2026-08-29T03:53:22.780Z",
-      "createdAt": "2026-08-29T03:53:22.780Z"
+      "refreshTokenHash": "$2b$10$1Edsu8TwtBP28ykB.rl6PeBrtCZO1qKO8EOHRTaLn5qf4gNM/zx/O",
+      "lastActive": "2026-08-29T04:13:55.018Z",
+      "createdAt": "2026-08-29T04:13:55.018Z"
     }
   ],
   "messages": [
     {
-      "id": "38df7180-7f46-487c-8a4e-3095f88f181c",
-      "senderId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "content": "Welcome to our private Heaven, my love! KA² is finally ready just for us ❤️",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "read",
-      "createdAt": "2026-08-28T11:21:15.606Z",
-      "updatedAt": "2026-08-28T11:21:15.606Z"
-    },
-    {
-      "id": "874bf241-d82b-4ed3-972c-740d7989ff08",
-      "senderId": "b2222222-2222-2222-2222-222222222222",
-      "receiverId": "a1111111-1111-1111-1111-111111111111",
-      "content": "Keerthi, it looks breathtaking! A heaven made for two... I love you so much ❤️✨",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "read",
-      "createdAt": "2026-08-28T12:21:15.606Z",
-      "updatedAt": "2026-08-28T12:21:15.606Z"
-    },
-    {
-      "id": "49f3e8bd-1c52-43e5-be68-4151cb011456",
-      "senderId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "content": "You are the most beautiful part of my life ❤️",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "read",
-      "createdAt": "2026-08-28T13:21:16.049Z",
-      "updatedAt": "2026-08-28T13:21:16.049Z"
-    },
-    {
-      "id": "61e1d9f3-14b3-47c3-8932-bc3837ca796e",
-      "senderId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "content": "hi",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "read",
-      "createdAt": "2026-08-28T13:24:14.457Z",
-      "updatedAt": "2026-08-28T13:24:14.457Z"
-    },
-    {
-      "id": "0920c60f-af5d-4a2d-a8fe-9d470057e358",
-      "senderId": "b2222222-2222-2222-2222-222222222222",
-      "receiverId": "a1111111-1111-1111-1111-111111111111",
-      "content": "i love youuuuuu",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "read",
-      "createdAt": "2026-08-28T13:24:45.765Z",
-      "updatedAt": "2026-08-28T13:24:45.765Z"
-    },
-    {
-      "id": "242dedfd-a402-42cc-8e60-112c20abcef9",
+      "id": "f0249789-47b9-48d5-b2db-b6d9acb13b1c",
       "senderId": "a1111111-1111-1111-1111-111111111111",
       "receiverId": "b2222222-2222-2222-2222-222222222222",
       "content": "You are the most beautiful part of my life ❤️",
@@ -271,62 +67,23 @@
       "isEdited": false,
       "isDeleted": false,
       "status": "delivered",
-      "createdAt": "2026-08-29T02:48:57.928Z",
-      "updatedAt": "2026-08-29T02:48:57.928Z"
-    },
-    {
-      "id": "2c79f156-220d-4cc0-a7a8-1e8ef507effe",
-      "senderId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "content": "You are the most beautiful part of my life ❤️",
-      "type": "text",
-      "isEdited": false,
-      "isDeleted": false,
-      "status": "delivered",
-      "createdAt": "2026-08-29T03:53:22.897Z",
-      "updatedAt": "2026-08-29T03:53:22.897Z"
+      "createdAt": "2026-08-29T04:13:55.125Z",
+      "updatedAt": "2026-08-29T04:13:55.125Z"
     }
   ],
   "reactions": [
     {
-      "id": "87611af9-40e0-4d07-9c39-b87885afdbf1",
-      "messageId": "49f3e8bd-1c52-43e5-be68-4151cb011456",
+      "id": "b3de7327-987e-4748-901c-a9d03cee73a1",
+      "messageId": "f0249789-47b9-48d5-b2db-b6d9acb13b1c",
       "userId": "b2222222-2222-2222-2222-222222222222",
       "emoji": "❤️",
-      "createdAt": "2026-08-28T13:21:16.060Z"
-    },
-    {
-      "id": "73acee08-4ffe-418c-b7a0-9b58f314e9ff",
-      "messageId": "242dedfd-a402-42cc-8e60-112c20abcef9",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "emoji": "❤️",
-      "createdAt": "2026-08-29T02:48:57.940Z"
-    },
-    {
-      "id": "b50d670b-4f37-483c-8a35-de8ef129afa1",
-      "messageId": "2c79f156-220d-4cc0-a7a8-1e8ef507effe",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "emoji": "❤️",
-      "createdAt": "2026-08-29T03:53:22.908Z"
+      "createdAt": "2026-08-29T04:13:55.135Z"
     }
   ],
-  "calls": [
-    {
-      "id": "cc8d64cf-9e77-4103-ae98-0a46ac512c9f",
-      "callerId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "callType": "video",
-      "status": "completed",
-      "startedAt": "2026-08-27T13:21:15.606Z",
-      "endedAt": "2026-08-27T13:52:00.606Z",
-      "durationSeconds": 1845,
-      "isRecorded": false,
-      "createdAt": "2026-08-27T13:21:15.606Z"
-    }
-  ],
+  "calls": [],
   "memories": [
     {
-      "id": "2c7114a3-e16a-4e12-8793-d23b0c4cd71a",
+      "id": "0ca9f700-f790-4ab9-b884-1958ca9015e4",
       "title": "Our First Sunset Beach Walk",
       "description": "Golden hour waves and endless laughs.",
       "date": "2026-08-28",
@@ -338,109 +95,13 @@
       "isFavorite": true,
       "notes": "",
       "createdBy": "a1111111-1111-1111-1111-111111111111",
-      "createdAt": "2026-08-29T03:53:22.926Z",
-      "updatedAt": "2026-08-29T03:53:22.926Z"
-    },
-    {
-      "id": "6ceab3f2-3c3b-49f4-a12c-a4d2f771d62c",
-      "title": "Our First Sunset Beach Walk",
-      "description": "Golden hour waves and endless laughs.",
-      "date": "2026-08-28",
-      "location": "Paradise Cove",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "mediaType": "image",
-      "isFavorite": true,
-      "notes": "",
-      "createdBy": "a1111111-1111-1111-1111-111111111111",
-      "createdAt": "2026-08-29T02:48:57.958Z",
-      "updatedAt": "2026-08-29T02:48:57.958Z"
-    },
-    {
-      "id": "03e90e0a-f40c-4ddd-b9d5-c593f11fdeba",
-      "title": "Memory — Aug 29, 2026",
-      "description": "",
-      "date": "2026-08-29",
-      "location": "",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
-      "mediaType": "image",
-      "isFavorite": false,
-      "notes": "",
-      "createdBy": "b2222222-2222-2222-2222-222222222222",
-      "createdAt": "2026-08-29T02:48:32.363Z",
-      "updatedAt": "2026-08-29T02:48:32.363Z"
-    },
-    {
-      "id": "efbc88a9-02b6-4420-bcb9-649256f00611",
-      "title": "Memory — Aug 29, 2026",
-      "description": "",
-      "date": "2026-08-29",
-      "location": "",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800",
-      "mediaType": "image",
-      "isFavorite": false,
-      "notes": "",
-      "createdBy": "b2222222-2222-2222-2222-222222222222",
-      "createdAt": "2026-08-29T02:48:32.363Z",
-      "updatedAt": "2026-08-29T02:48:32.363Z"
-    },
-    {
-      "id": "c7cede62-a169-4a60-99b2-027cd09cb428",
-      "title": "Our First Sunset Beach Walk",
-      "description": "Golden hour waves and endless laughs.",
-      "date": "2026-08-28",
-      "location": "Paradise Cove",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "mediaType": "image",
-      "isFavorite": false,
-      "notes": "",
-      "createdBy": "a1111111-1111-1111-1111-111111111111",
-      "createdAt": "2026-08-28T13:21:16.069Z",
-      "updatedAt": "2026-08-28T13:21:16.069Z"
-    },
-    {
-      "id": "66a14fb2-939b-4358-b63b-7565c4fdfc86",
-      "title": "That Magical Sunset Evening ❤️",
-      "description": "The sky turned shades of lavender and rose, just like our dreams.",
-      "date": "2026-08-15",
-      "location": "Sunset View Point",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800&q=80",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=300&q=80",
-      "mediaType": "image",
-      "isFavorite": true,
-      "notes": "You looked at me and the entire universe felt peaceful.",
-      "createdBy": "a1111111-1111-1111-1111-111111111111",
-      "createdAt": "2026-08-28T13:21:15.605Z",
-      "updatedAt": "2026-08-28T13:21:15.605Z"
-    },
-    {
-      "id": "20e563c1-6c91-46a5-a6ce-3e9a95eb1b63",
-      "title": "Our Starry Night Walk ✨",
-      "description": "Walking hand in hand under the celestial glow.",
-      "date": "2026-08-20",
-      "location": "Observatory Hill",
-      "category": "photos",
-      "mediaUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&q=80",
-      "mediaType": "image",
-      "isFavorite": true,
-      "notes": "Counting stars and realizing you shine the brightest.",
-      "createdBy": "b2222222-2222-2222-2222-222222222222",
-      "createdAt": "2026-08-28T13:21:15.605Z",
-      "updatedAt": "2026-08-28T13:21:15.605Z"
+      "createdAt": "2026-08-29T04:13:55.158Z",
+      "updatedAt": "2026-08-29T04:13:55.158Z"
     }
   ],
   "loveNotes": [
     {
-      "id": "6d2c790e-754c-4ba3-947a-12444fe8ca79",
+      "id": "7039a4da-4a94-4c60-9a78-cfc9a923d33c",
       "senderId": "b2222222-2222-2222-2222-222222222222",
       "receiverId": "a1111111-1111-1111-1111-111111111111",
       "title": "Thank You For Building Our Heaven",
@@ -448,46 +109,12 @@
       "stationeryStyle": "rose_gold",
       "date": "2026-08-29",
       "isOpened": false,
-      "createdAt": "2026-08-29T03:53:22.966Z"
-    },
-    {
-      "id": "2d6cb4e8-bc88-480e-b099-fb9f49ab47e1",
-      "senderId": "b2222222-2222-2222-2222-222222222222",
-      "receiverId": "a1111111-1111-1111-1111-111111111111",
-      "title": "Thank You For Building Our Heaven",
-      "message": "Every moment with you feels like home.",
-      "stationeryStyle": "rose_gold",
-      "date": "2026-08-29",
-      "isOpened": false,
-      "createdAt": "2026-08-29T02:48:58.009Z"
-    },
-    {
-      "id": "16d65ca2-4244-4394-85ea-b44390b4dd33",
-      "senderId": "b2222222-2222-2222-2222-222222222222",
-      "receiverId": "a1111111-1111-1111-1111-111111111111",
-      "title": "Thank You For Building Our Heaven",
-      "message": "Every moment with you feels like home.",
-      "stationeryStyle": "rose_gold",
-      "date": "2026-08-28",
-      "isOpened": false,
-      "createdAt": "2026-08-28T13:21:16.115Z"
-    },
-    {
-      "id": "f2f620d1-552b-4383-ae00-356bf42d3153",
-      "senderId": "a1111111-1111-1111-1111-111111111111",
-      "receiverId": "b2222222-2222-2222-2222-222222222222",
-      "title": "To My Forever Girl ❤️",
-      "message": "Every line of code, every design detail, every second spent building KA² — was inspired by your smile. You are my peace and my greatest blessing.",
-      "stationeryStyle": "romantic_parchment",
-      "date": "2026-08-28",
-      "isOpened": true,
-      "openedAt": "2026-08-28T13:21:15.605Z",
-      "createdAt": "2026-08-28T13:21:15.605Z"
+      "createdAt": "2026-08-29T04:13:55.199Z"
     }
   ],
   "vaultItems": [
     {
-      "id": "b7640909-409d-4ce7-8166-20173e65814b",
+      "id": "2426b2c4-3c26-4e0c-bc67-ae1cdcc38f56",
       "ownerId": "a1111111-1111-1111-1111-111111111111",
       "vaultType": "shared",
       "title": "Our Joint Savings & Passport Copies",
@@ -495,11 +122,11 @@
       "encryptedData": "CiphertextShared456==",
       "iv": "iv456",
       "authTag": "",
-      "createdAt": "2026-08-29T03:53:22.948Z",
-      "updatedAt": "2026-08-29T03:53:22.948Z"
+      "createdAt": "2026-08-29T04:13:55.180Z",
+      "updatedAt": "2026-08-29T04:13:55.180Z"
     },
     {
-      "id": "3348365f-9243-469a-bb14-d7ea2b2a98d0",
+      "id": "ba1c62f2-53fa-42d7-bdc0-fa0501e8625c",
       "ownerId": "a1111111-1111-1111-1111-111111111111",
       "vaultType": "personal",
       "title": "Surprise Anniversary Plan",
@@ -507,108 +134,24 @@
       "encryptedData": "CiphertextPrivate123==",
       "iv": "iv123",
       "authTag": "",
-      "createdAt": "2026-08-29T03:53:22.938Z",
-      "updatedAt": "2026-08-29T03:53:22.938Z"
-    },
-    {
-      "id": "555b88e6-ffea-4d21-b598-efef37a83c07",
-      "ownerId": "a1111111-1111-1111-1111-111111111111",
-      "vaultType": "shared",
-      "title": "Our Joint Savings & Passport Copies",
-      "itemType": "document",
-      "encryptedData": "CiphertextShared456==",
-      "iv": "iv456",
-      "authTag": "",
-      "createdAt": "2026-08-29T02:48:57.982Z",
-      "updatedAt": "2026-08-29T02:48:57.982Z"
-    },
-    {
-      "id": "c66e3a74-ed67-40aa-9ec8-f7c17ea4d72e",
-      "ownerId": "a1111111-1111-1111-1111-111111111111",
-      "vaultType": "personal",
-      "title": "Surprise Anniversary Plan",
-      "itemType": "secret",
-      "encryptedData": "CiphertextPrivate123==",
-      "iv": "iv123",
-      "authTag": "",
-      "createdAt": "2026-08-29T02:48:57.972Z",
-      "updatedAt": "2026-08-29T02:48:57.972Z"
-    },
-    {
-      "id": "e4e72fea-4b94-4fc8-a1e2-0d5cfdfd9ceb",
-      "ownerId": "b2222222-2222-2222-2222-222222222222",
-      "vaultType": "personal",
-      "title": "Secret Photo — Aug 29, 2026",
-      "itemType": "photo",
-      "encryptedData": "ENCRYPTED_PAYLOAD_2",
-      "iv": "IV2",
-      "authTag": "",
-      "createdAt": "2026-08-29T02:48:32.394Z",
-      "updatedAt": "2026-08-29T02:48:32.394Z"
-    },
-    {
-      "id": "7fe39f1d-6a21-47c2-85fc-2ef4c3cee1c2",
-      "ownerId": "b2222222-2222-2222-2222-222222222222",
-      "vaultType": "shared",
-      "title": "Secret Photo — Aug 29, 2026",
-      "itemType": "photo",
-      "encryptedData": "ENCRYPTED_PAYLOAD_1",
-      "iv": "IV1",
-      "authTag": "",
-      "createdAt": "2026-08-29T02:48:32.394Z",
-      "updatedAt": "2026-08-29T02:48:32.394Z"
-    },
-    {
-      "id": "0d6c3c1f-dd92-413f-823b-69d2f765a227",
-      "ownerId": "a1111111-1111-1111-1111-111111111111",
-      "vaultType": "shared",
-      "title": "Our Joint Savings & Passport Copies",
-      "itemType": "document",
-      "encryptedData": "CiphertextShared456==",
-      "iv": "iv456",
-      "authTag": "",
-      "createdAt": "2026-08-28T13:21:16.098Z",
-      "updatedAt": "2026-08-28T13:21:16.098Z"
-    },
-    {
-      "id": "3b8dc19d-fd92-492d-96b4-f85c68b1dfc2",
-      "ownerId": "a1111111-1111-1111-1111-111111111111",
-      "vaultType": "personal",
-      "title": "Surprise Anniversary Plan",
-      "itemType": "secret",
-      "encryptedData": "CiphertextPrivate123==",
-      "iv": "iv123",
-      "authTag": "",
-      "createdAt": "2026-08-28T13:21:16.089Z",
-      "updatedAt": "2026-08-28T13:21:16.089Z"
-    },
-    {
-      "id": "84bff440-af4c-420e-8a6e-bd99a6662201",
-      "ownerId": "a1111111-1111-1111-1111-111111111111",
-      "vaultType": "shared",
-      "title": "Our Future Dream House Notes",
-      "itemType": "note",
-      "encryptedData": "U2FsdGVkX1+vMm19Fh7...",
-      "iv": "r3v2b4k5m6n7",
-      "authTag": "tag123",
-      "createdAt": "2026-08-28T13:21:15.605Z",
-      "updatedAt": "2026-08-28T13:21:15.605Z"
+      "createdAt": "2026-08-29T04:13:55.170Z",
+      "updatedAt": "2026-08-29T04:13:55.170Z"
     }
   ],
   "timelineMilestones": [
     {
-      "id": "175d3a2f-59e0-4b79-a753-c99eb094b60f",
+      "id": "5ce124c2-be70-44c1-811e-3b357ea7cc11",
       "title": "Love Note: Thank You For Building Our Heaven",
       "description": "Anu sent a heartfelt love note.",
       "date": "2026-08-29",
       "monthYear": "August 2026",
       "category": "note",
       "icon": "mail",
-      "relatedLoveNoteId": "6d2c790e-754c-4ba3-947a-12444fe8ca79",
-      "createdAt": "2026-08-29T03:53:22.966Z"
+      "relatedLoveNoteId": "7039a4da-4a94-4c60-9a78-cfc9a923d33c",
+      "createdAt": "2026-08-29T04:13:55.199Z"
     },
     {
-      "id": "ded9858b-fef4-47a2-9117-840978fd6313",
+      "id": "e5fe1c7f-baaa-4b16-8de0-9e2915d2f2bd",
       "title": "Our First Sunset Beach Walk",
       "description": "Golden hour waves and endless laughs.",
       "date": "2026-08-28",
@@ -616,281 +159,64 @@
       "category": "milestone",
       "icon": "camera",
       "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "relatedMemoryId": "2c7114a3-e16a-4e12-8793-d23b0c4cd71a",
-      "createdAt": "2026-08-29T03:53:22.927Z"
-    },
-    {
-      "id": "9304bf3e-bf3c-48bf-b6fb-154dcd6ce97e",
-      "title": "Love Note: Thank You For Building Our Heaven",
-      "description": "Anu sent a heartfelt love note.",
-      "date": "2026-08-29",
-      "monthYear": "August 2026",
-      "category": "note",
-      "icon": "mail",
-      "relatedLoveNoteId": "2d6cb4e8-bc88-480e-b099-fb9f49ab47e1",
-      "createdAt": "2026-08-29T02:48:58.009Z"
-    },
-    {
-      "id": "113e0321-965b-4d5b-bf3e-686026ba317f",
-      "title": "Our First Sunset Beach Walk",
-      "description": "Golden hour waves and endless laughs.",
-      "date": "2026-08-28",
-      "monthYear": "August 2026",
-      "category": "milestone",
-      "icon": "camera",
-      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "relatedMemoryId": "6ceab3f2-3c3b-49f4-a12c-a4d2f771d62c",
-      "createdAt": "2026-08-29T02:48:57.958Z"
-    },
-    {
-      "id": "274f491c-d2b9-471d-bd75-68322a990ca7",
-      "title": "Memory — Aug 29, 2026",
-      "description": "A cherished memory in our heaven.",
-      "date": "2026-08-29",
-      "monthYear": "August 2026",
-      "category": "milestone",
-      "icon": "camera",
-      "mediaUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800",
-      "relatedMemoryId": "03e90e0a-f40c-4ddd-b9d5-c593f11fdeba",
-      "createdAt": "2026-08-29T02:48:32.363Z"
-    },
-    {
-      "id": "41f45198-6c07-47ac-a5f0-4329e9307b2d",
-      "title": "Memory — Aug 29, 2026",
-      "description": "A cherished memory in our heaven.",
-      "date": "2026-08-29",
-      "monthYear": "August 2026",
-      "category": "milestone",
-      "icon": "camera",
-      "mediaUrl": "https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800",
-      "relatedMemoryId": "efbc88a9-02b6-4420-bcb9-649256f00611",
-      "createdAt": "2026-08-29T02:48:32.363Z"
-    },
-    {
-      "id": "31a24a64-ed64-42a5-a9a8-4ec5d7911ac5",
-      "title": "Love Note: Thank You For Building Our Heaven",
-      "description": "Anu sent a heartfelt love note.",
-      "date": "2026-08-28",
-      "monthYear": "August 2026",
-      "category": "note",
-      "icon": "mail",
-      "relatedLoveNoteId": "16d65ca2-4244-4394-85ea-b44390b4dd33",
-      "createdAt": "2026-08-28T13:21:16.115Z"
-    },
-    {
-      "id": "b5df4037-9029-44e5-bd4e-30d46bac6021",
-      "title": "Our First Sunset Beach Walk",
-      "description": "Golden hour waves and endless laughs.",
-      "date": "2026-08-28",
-      "monthYear": "August 2026",
-      "category": "milestone",
-      "icon": "camera",
-      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      "relatedMemoryId": "c7cede62-a169-4a60-99b2-027cd09cb428",
-      "createdAt": "2026-08-28T13:21:16.079Z"
-    },
-    {
-      "id": "248bee15-0273-40b1-9704-595809eb4177",
-      "title": "The First Day We Met ❤️",
-      "description": "The moment our stories intertwined forever.",
-      "date": "2024-02-14",
-      "monthYear": "February 2024",
-      "category": "anniversary",
-      "icon": "heart",
-      "mediaUrl": "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80",
-      "createdAt": "2026-08-28T13:21:15.605Z"
-    },
-    {
-      "id": "5094489a-ef40-4a45-8841-430d00a83328",
-      "title": "Our First Mountain Getaway 🌄",
-      "description": "Breathtaking clouds and unforgettable conversations.",
-      "date": "2025-06-10",
-      "monthYear": "June 2025",
-      "category": "trip",
-      "icon": "map-pin",
-      "mediaUrl": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80",
-      "createdAt": "2026-08-28T13:21:15.605Z"
-    },
-    {
-      "id": "dc796010-122a-47dd-8a77-59e10aa6118c",
-      "title": "KA² — HEAVEN Launch Day ✨",
-      "description": "A Heaven Made for Two is officially alive.",
-      "date": "2026-08-28",
-      "monthYear": "August 2026",
-      "category": "milestone",
-      "icon": "sparkles",
-      "createdAt": "2026-08-28T13:21:15.605Z"
+      "relatedMemoryId": "0ca9f700-f790-4ab9-b884-1958ca9015e4",
+      "createdAt": "2026-08-29T04:13:55.158Z"
     }
   ],
   "appSettings": {
     "appName": "KA² — HEAVEN",
     "shortBrandMark": "KA²",
     "tagline": "A Heaven Made for Two.",
-    "secondaryTagline": "Where It’s Just Us. ❤️",
+    "secondaryTagline": "Private, Intimate & Forever",
     "primaryColor": "#FF4F81",
     "secondaryColor": "#9B5CFF",
     "themeMode": "dark",
-    "particleIntensity": 1,
+    "particleIntensity": 40,
     "reduceMotion": false,
     "soundEffectsEnabled": true,
     "hapticFeedbackEnabled": true,
-    "autoLockTimeoutSeconds": 60,
+    "autoLockTimeoutSeconds": 180,
     "biometricsEnabled": true,
     "e2eeEnabled": true,
     "callRecordingAllowed": true,
-    "chatWallpaper": "ambient-nebula",
-    "maxUploadSizeMB": 50
+    "chatWallpaper": "cosmic_nebula",
+    "maxUploadSizeMB": 100,
+    "backupConfig": {
+      "autoBackupSchedule": "daily",
+      "backupRetentionCount": 10,
+      "recentSnapshots": []
+    }
   },
   "auditLogs": [
     {
-      "id": "067ff049-40e9-4c89-bf47-198e73617807",
+      "id": "c7daabf6-22f8-491a-af07-0e8e64f8b264",
       "userId": "b2222222-2222-2222-2222-222222222222",
       "userEmail": "anu@ka2heaven.local",
       "action": "USER_LOGIN",
       "details": "Successful login from Anu iPhone 15 (ios)",
       "ipAddress": "::ffff:127.0.0.1",
       "userAgent": "Unknown Client",
-      "createdAt": "2026-08-29T03:53:22.780Z"
+      "createdAt": "2026-08-29T04:13:55.018Z"
     },
     {
-      "id": "8d666fe2-c1fa-4536-b88d-1089c15ba233",
+      "id": "cf4c9b02-f66a-4d06-8ff7-44af46a92417",
       "userId": "a1111111-1111-1111-1111-111111111111",
       "userEmail": "keerthi@ka2heaven.local",
       "action": "USER_LOGIN",
       "details": "Successful login from Keerthi iPhone 16 Pro (ios)",
       "ipAddress": "::ffff:127.0.0.1",
       "userAgent": "Unknown Client",
-      "createdAt": "2026-08-29T03:53:22.688Z"
+      "createdAt": "2026-08-29T04:13:54.931Z"
     },
     {
-      "id": "7d8d2039-5952-487e-a967-db73e4b6895a",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Admin Web Console (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-29T03:31:38.786Z"
-    },
-    {
-      "id": "b963cdb6-e5a9-4b47-aa81-8ceef0683f8a",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Desktop Browser (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-29T03:30:20.884Z"
-    },
-    {
-      "id": "0bff46e2-a0d9-4d3f-8739-7cb5ec36fa41",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "userEmail": "anu@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Desktop Browser (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-29T03:30:14.463Z"
-    },
-    {
-      "id": "17a2cb8d-7784-45bb-80c3-27c7655a842b",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "userEmail": "anu@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Anu iPhone 15 (ios)",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "createdAt": "2026-08-29T02:48:57.814Z"
-    },
-    {
-      "id": "7b9f2410-ffb9-4ac0-81e3-9bb3f191097c",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Keerthi iPhone 16 Pro (ios)",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "createdAt": "2026-08-29T02:48:57.716Z"
-    },
-    {
-      "id": "5f79ee3e-ffaf-41fc-afc3-3cbfd187a221",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "userEmail": "anu@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Unknown (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "node",
-      "createdAt": "2026-08-29T02:48:32.330Z"
-    },
-    {
-      "id": "a40cb720-51f4-4f13-b205-50fc68082ce7",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Unknown (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "node",
-      "createdAt": "2026-08-29T02:48:32.241Z"
-    },
-    {
-      "id": "0e7068b9-ace3-4eb0-8f40-9de3b741bcf7",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Admin Web Console (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-28T13:24:54.051Z"
-    },
-    {
-      "id": "0e1f8c90-cea7-45dc-8534-aced3c83216a",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "userEmail": "anu@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Desktop Browser (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-28T13:24:30.377Z"
-    },
-    {
-      "id": "9368642b-c919-4515-864c-e25763702764",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Desktop Browser (web)",
-      "ipAddress": "127.0.0.1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0",
-      "createdAt": "2026-08-28T13:23:53.521Z"
-    },
-    {
-      "id": "b7f99541-e65e-4ace-84ae-d1134dcb19fd",
-      "userId": "b2222222-2222-2222-2222-222222222222",
-      "userEmail": "anu@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Anu iPhone 15 (ios)",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "createdAt": "2026-08-28T13:21:15.942Z"
-    },
-    {
-      "id": "80d87abf-f1d4-4e99-8eba-c4646e48e7ed",
-      "userId": "a1111111-1111-1111-1111-111111111111",
-      "userEmail": "keerthi@ka2heaven.local",
-      "action": "USER_LOGIN",
-      "details": "Successful login from Keerthi iPhone 16 Pro (ios)",
-      "ipAddress": "::ffff:127.0.0.1",
-      "userAgent": "Unknown Client",
-      "createdAt": "2026-08-28T13:21:15.854Z"
-    },
-    {
-      "id": "304886e6-cea0-48cc-8f66-f366a5d95092",
+      "id": "init-log",
       "userId": "a1111111-1111-1111-1111-111111111111",
       "userEmail": "keerthi@ka2heaven.local",
       "action": "SYSTEM_INITIALIZED",
-      "details": "KA² — HEAVEN initialized with secure private encryption and couple authentication.",
+      "details": "KA² — HEAVEN clean database active for Keerthi & Anu.",
       "ipAddress": "127.0.0.1",
       "userAgent": "KA2-Heaven-Backend/1.0",
-      "createdAt": "2026-08-28T13:21:15.605Z"
+      "createdAt": "2026-08-29T04:00:00.000Z"
     }
   ]
 }

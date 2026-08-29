@@ -60,56 +60,9 @@ const INITIAL_USERS: UserProfile[] = [
   }
 ];
 
-const INITIAL_MEMORIES: MemoryItem[] = [
-  {
-    id: 'mem-1',
-    title: 'That Magical Sunset Evening ❤️',
-    description: 'The sky turned shades of lavender and rose, just like our dreams.',
-    date: '2026-08-15',
-    location: 'Sunset View Point',
-    category: 'photos',
-    mediaUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=300&q=80',
-    mediaType: 'image',
-    isFavorite: true,
-    notes: 'You looked at me and the entire universe felt peaceful.',
-    createdBy: KEERTHI_ID,
-    createdAt: '2026-08-28T12:00:00.000Z',
-    updatedAt: '2026-08-28T12:00:00.000Z',
-  },
-  {
-    id: 'mem-2',
-    title: 'Our Starry Night Walk ✨',
-    description: 'Walking hand in hand under the celestial glow.',
-    date: '2026-08-20',
-    location: 'Observatory Hill',
-    category: 'photos',
-    mediaUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&q=80',
-    mediaType: 'image',
-    isFavorite: true,
-    notes: 'Counting stars and realizing you shine the brightest.',
-    createdBy: ANU_ID,
-    createdAt: '2026-08-28T13:00:00.000Z',
-    updatedAt: '2026-08-28T13:00:00.000Z',
-  }
-];
+const INITIAL_MEMORIES: MemoryItem[] = [];
 
-const INITIAL_LOVE_NOTES: LoveNoteItem[] = [
-  {
-    id: 'note-1',
-    senderId: KEERTHI_ID,
-    senderName: 'Keerthi Adarsh',
-    receiverId: ANU_ID,
-    title: 'To My Forever Girl ❤️',
-    message: 'Every line of code, every design detail, every second spent building KA² — was inspired by your smile. You are my peace and my greatest blessing.',
-    stationeryStyle: 'romantic_parchment',
-    date: '2026-08-28',
-    isOpened: true,
-    openedAt: '2026-08-28T14:00:00.000Z',
-    createdAt: '2026-08-28T14:00:00.000Z',
-  }
-];
+const INITIAL_LOVE_NOTES: LoveNoteItem[] = [];
 
 class ClientEngine {
   private getStorage<T>(key: string, fallback: T): T {
@@ -138,8 +91,7 @@ class ClientEngine {
   }
 
   public getMessages(): Message[] {
-    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
-    return this.getStorage('messages', isWiped ? [] : []);
+    return this.getStorage('messages', []);
   }
 
   public saveMessages(msgs: Message[]) {
@@ -147,8 +99,7 @@ class ClientEngine {
   }
 
   public getMemories(): MemoryItem[] {
-    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
-    return this.getStorage('memories', isWiped ? [] : []);
+    return this.getStorage('memories', []);
   }
 
   public saveMemories(mems: MemoryItem[]) {
@@ -156,8 +107,7 @@ class ClientEngine {
   }
 
   public getLoveNotes(): LoveNoteItem[] {
-    const isWiped = typeof localStorage !== 'undefined' && localStorage.getItem('ka2_data_cleared') === 'true';
-    return this.getStorage('love_notes', isWiped ? [] : []);
+    return this.getStorage('love_notes', []);
   }
 
   public saveLoveNotes(notes: LoveNoteItem[]) {
