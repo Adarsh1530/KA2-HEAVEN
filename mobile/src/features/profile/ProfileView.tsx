@@ -349,7 +349,12 @@ export const ProfileView: React.FC = () => {
       {/* 5. Admin Dashboard Link (if Admin) */}
       {user?.role === 'admin' && (
         <a
-          href="http://localhost:5174"
+          href={
+            import.meta.env.VITE_ADMIN_URL ||
+            (typeof window !== 'undefined' && window.location.port === '5173'
+              ? `http://${window.location.hostname || 'localhost'}:5174`
+              : '/admin')
+          }
           target="_blank"
           rel="noreferrer"
           className="glass-panel p-4 rounded-2xl border border-[#9B5CFF]/40 bg-gradient-to-r from-[#9B5CFF]/15 to-[#FF4F81]/15 flex items-center justify-between hover:border-[#FF4F81] transition-all cursor-pointer"

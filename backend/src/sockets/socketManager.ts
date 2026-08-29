@@ -277,10 +277,12 @@ export class SocketManager {
       };
     });
 
+    const usersList = data.users;
+    const bothOnline = usersList.length >= 2 && usersList.every(u => presenceMap[u.id]?.presenceStatus && presenceMap[u.id]?.presenceStatus !== 'offline');
+
     this.io.emit(SOCKET_EVENTS.PRESENCE_SYNC, {
       presence: presenceMap,
-      bothOnline: (presenceMap['a1111111-1111-1111-1111-111111111111']?.presenceStatus !== 'offline') &&
-                  (presenceMap['b2222222-2222-2222-2222-222222222222']?.presenceStatus !== 'offline'),
+      bothOnline,
     });
   }
 

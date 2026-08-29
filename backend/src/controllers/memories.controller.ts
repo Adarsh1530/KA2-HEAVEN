@@ -28,25 +28,29 @@ export class MemoriesController {
 
   public static async createMemory(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
-      const { title, description, date, location, category = 'photos', mediaUrl, thumbnailUrl, mediaType = 'image', notes } = req.body;
+      const { title, description, date, location, category = 'photos', mediaUrl, thumbnailUrl, mediaType = 'image', notes, isFavorite } = req.body;
 
-      if (!title || !mediaUrl) {
-        res.status(400).json({ error: 'Title and media are required.' });
+      if (!mediaUrl) {
+        res.status(400).json({ error: 'Media URL is required.' });
         return;
       }
+
+      const memoryDate = date || new Date().toISOString().split('T')[0];
+      const defaultTitle = `Memory — ${new Date(memoryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      const resolvedTitle = (title && title.trim()) ? title.trim() : defaultTitle;
 
       const data = db.getData();
       const newMemory = {
         id: uuidv4(),
-        title: title.trim(),
+        title: resolvedTitle,
         description: description || '',
-        date: date || new Date().toISOString().split('T')[0],
+        date: memoryDate,
         location: location || '',
         category,
         mediaUrl,
         thumbnailUrl: thumbnailUrl || mediaUrl,
         mediaType,
-        isFavorite: false,
+        isFavorite: Boolean(isFavorite),
         notes: notes || '',
         createdBy: req.user!.id,
         createdAt: new Date().toISOString(),
@@ -73,6 +77,67 @@ export class MemoriesController {
       res.status(201).json({ memory: newMemory });
     } catch (err) {
       res.status(500).json({ error: 'Failed to create memory.' });
+    }
+  }
+
+  public static async createBatchMemories(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { memories } = req.body;
+      if (!Array.isArray(memories) || memories.length === 0) {
+        res.status(400).json({ error: 'Memories array is required.' });
+        return;
+      }
+
+      const data = db.getData();
+      const createdMemories: any[] = [];
+      const now = new Date().toISOString();
+
+      for (const item of memories) {
+        if (!item.mediaUrl) continue;
+
+        const memoryDate = item.date || now.split('T')[0];
+        const defaultTitle = `Memory — ${new Date(memoryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        const resolvedTitle = (item.title && item.title.trim()) ? item.title.trim() : defaultTitle;
+
+        const newMemory = {
+          id: uuidv4(),
+          title: resolvedTitle,
+          description: item.description || '',
+          date: memoryDate,
+          location: item.location || '',
+          category: item.category || 'photos',
+          mediaUrl: item.mediaUrl,
+          thumbnailUrl: item.thumbnailUrl || item.mediaUrl,
+          mediaType: item.mediaType || 'image',
+          isFavorite: Boolean(item.isFavorite),
+          notes: item.notes || '',
+          createdBy: req.user!.id,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        data.memories.unshift(newMemory);
+        createdMemories.push(newMemory);
+
+        // Auto-add milestone
+        data.timelineMilestones.unshift({
+          id: uuidv4(),
+          title: newMemory.title,
+          description: newMemory.description || 'A cherished memory in our heaven.',
+          date: newMemory.date,
+          monthYear: new Date(newMemory.date).toLocaleString('default', { month: 'long', year: 'numeric' }),
+          category: 'milestone',
+          icon: 'camera',
+          mediaUrl: newMemory.mediaUrl,
+          relatedMemoryId: newMemory.id,
+          createdAt: now,
+        });
+      }
+
+      await db.persist();
+      res.status(201).json({ memories: createdMemories, success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to create batch memories.' });
     }
   }
 

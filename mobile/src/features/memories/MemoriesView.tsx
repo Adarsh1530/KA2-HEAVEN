@@ -9,14 +9,19 @@ import {
   Plus,
   Image as ImageIcon,
   Video,
-  Mic,
   Calendar,
-  MapPin,
   Sparkles,
   X,
   Upload,
+  Check,
 } from 'lucide-react';
 import { format } from 'date-fns';
+
+interface SelectedFilePreview {
+  file: File;
+  previewUrl: string;
+  id: string;
+}
 
 export const MemoriesView: React.FC = () => {
   const [memories, setMemories] = useState<MemoryItem[]>([]);
@@ -24,16 +29,13 @@ export const MemoriesView: React.FC = () => {
   const [selectedMemory, setSelectedMemory] = useState<MemoryItem | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  // New Memory Form State
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [location, setLocation] = useState('');
-  const [notes, setNotes] = useState('');
-  const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  // Multi-file selection state
+  const [selectedFiles, setSelectedFiles] = useState<SelectedFilePreview[]>([]);
+  const [optionalTitle, setOptionalTitle] = useState('');
+  const [optionalDate, setOptionalDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const directUploadRef = useRef<HTMLInputElement | null>(null);
 
   const fetchMemories = async () => {
     try {
@@ -44,7 +46,7 @@ export const MemoriesView: React.FC = () => {
         endpoint += `?category=${activeCategory}`;
       }
       const data = await api.request(endpoint);
-      setMemories(data.memories);
+      setMemories(data.memories || []);
     } catch (err) {
       console.error('Failed to fetch memories:', err);
     }
@@ -76,50 +78,79 @@ export const MemoriesView: React.FC = () => {
     }
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMediaFile(file);
-      setMediaPreview(URL.createObjectURL(file));
-    }
+  const handleFilesChosen = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const newFiles: SelectedFilePreview[] = Array.from(files).map((f) => ({
+      file: f,
+      previewUrl: URL.createObjectURL(f),
+      id: `${f.name}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    }));
+
+    setSelectedFiles((prev) => [...prev, ...newFiles]);
+    setIsCreating(true);
   };
 
-  const handleCreateMemory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !mediaFile) return;
+  const handleRemoveSelectedFile = (id: string) => {
+    setSelectedFiles((prev) => {
+      const filtered = prev.filter((item) => item.id !== id);
+      if (filtered.length === 0) {
+        setIsCreating(false);
+      }
+      return filtered;
+    });
+  };
+
+  const handleSaveMemories = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (selectedFiles.length === 0) return;
 
     setIsSubmitting(true);
     try {
-      const uploadRes = await api.uploadMedia(mediaFile);
-      const isVid = mediaFile.type.startsWith('video/');
-      const isAud = mediaFile.type.startsWith('audio/');
+      const rawFiles = selectedFiles.map((item) => item.file);
+      const uploadedMedia = await api.uploadMultipleMedia(rawFiles);
 
-      const payload = {
-        title,
-        description,
-        date,
-        location,
-        category: isVid ? 'videos' : isAud ? 'voice' : 'photos',
-        mediaUrl: uploadRes.fileUrl,
-        mediaType: isVid ? 'video' : isAud ? 'audio' : 'image',
-        notes,
-      };
+      const memDate = optionalDate || new Date().toISOString().split('T')[0];
+      const defaultDateStr = format(new Date(memDate), 'MMM dd, yyyy');
 
-      const res = await api.request('/memories', {
-        method: 'POST',
-        body: JSON.stringify(payload),
+      const batchPayload = uploadedMedia.map((media, idx) => {
+        const isVid = media.mimeType?.startsWith('video/');
+        const isAud = media.mimeType?.startsWith('audio/');
+        const itemTitle =
+          optionalTitle.trim()
+            ? (selectedFiles.length > 1 ? `${optionalTitle.trim()} (${idx + 1})` : optionalTitle.trim())
+            : `Memory — ${defaultDateStr}${selectedFiles.length > 1 ? ` (${idx + 1})` : ''}`;
+
+        return {
+          title: itemTitle,
+          description: '',
+          date: memDate,
+          location: 'Our Heaven',
+          category: (isVid ? 'videos' : isAud ? 'voice' : 'photos') as any,
+          mediaUrl: media.fileUrl,
+          thumbnailUrl: media.fileUrl,
+          mediaType: (isVid ? 'video' : isAud ? 'audio' : 'image') as any,
+          isFavorite: false,
+          notes: '',
+        };
       });
 
-      setMemories(prev => [res.memory, ...prev]);
+      const res = await api.request('/memories/batch', {
+        method: 'POST',
+        body: JSON.stringify({ memories: batchPayload }),
+      });
+
+      if (res.memories) {
+        setMemories((prev) => [...res.memories, ...prev]);
+      } else {
+        await fetchMemories();
+      }
+
+      // Reset state and close modal
+      setSelectedFiles([]);
+      setOptionalTitle('');
       setIsCreating(false);
-      setTitle('');
-      setDescription('');
-      setLocation('');
-      setNotes('');
-      setMediaFile(null);
-      setMediaPreview(null);
     } catch (err) {
-      console.error('Failed to create memory:', err);
+      console.error('Failed to create memories:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +165,31 @@ export const MemoriesView: React.FC = () => {
 
   return (
     <div className="flex flex-col space-y-4 pb-24 px-4 pt-3 select-none">
-      {/* 1. Header & New Memory Button */}
+      {/* Hidden Global Multi-File Pickers */}
+      <input
+        type="file"
+        ref={directUploadRef}
+        multiple
+        accept="image/*,video/*"
+        onChange={(e) => {
+          handleFilesChosen(e.target.files);
+          if (directUploadRef.current) directUploadRef.current.value = '';
+        }}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={fileInputRef}
+        multiple
+        accept="image/*,video/*"
+        onChange={(e) => {
+          handleFilesChosen(e.target.files);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }}
+        className="hidden"
+      />
+
+      {/* 1. Header & Instant Upload Button */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-white flex items-center space-x-2">
@@ -145,11 +200,11 @@ export const MemoriesView: React.FC = () => {
 
         <motion.button
           whileTap={{ scale: 0.95 }}
-          onClick={() => setIsCreating(true)}
-          className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-glow-pink cursor-pointer"
+          onClick={() => directUploadRef.current?.click()}
+          className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-glow-pink cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
-          <span>New Memory</span>
+          <Upload className="w-4 h-4" />
+          <span>Upload Photos</span>
         </motion.button>
       </div>
 
@@ -163,7 +218,7 @@ export const MemoriesView: React.FC = () => {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center space-x-1.5 transition-all whitespace-nowrap ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center space-x-1.5 transition-all whitespace-nowrap cursor-pointer ${
                 isActive
                   ? 'bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white shadow-glow-pink font-semibold'
                   : 'glass-panel text-white/70 hover:text-white border-white/10'
@@ -182,8 +237,17 @@ export const MemoriesView: React.FC = () => {
           <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3">
             <Heart className="w-8 h-8 text-[#FF91B5] opacity-50" />
           </div>
-          <h3 className="text-sm font-semibold text-white">Nothing here yet. Create your first memory.</h3>
-          <p className="text-xs text-[#A7A7B7] mt-1">Capture the moments that take your breath away.</p>
+          <h3 className="text-sm font-semibold text-white">No memories uploaded yet.</h3>
+          <p className="text-xs text-[#A7A7B7] mt-1 max-w-xs">
+            Tap Upload Photos to select multiple photos or videos and save them directly!
+          </p>
+          <button
+            onClick={() => directUploadRef.current?.click()}
+            className="mt-4 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-medium border border-white/10 flex items-center space-x-2 cursor-pointer"
+          >
+            <Upload className="w-4 h-4 text-[#FF4F81]" />
+            <span>Select Photos Now</span>
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3">
@@ -238,7 +302,7 @@ export const MemoriesView: React.FC = () => {
         onDelete={handleDelete}
       />
 
-      {/* Create Memory Form Modal */}
+      {/* Multi-Image Upload & Preview Modal */}
       <AnimatePresence>
         {isCreating && (
           <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 safe-top safe-bottom">
@@ -246,123 +310,109 @@ export const MemoriesView: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-panel rounded-3xl p-6 w-full max-w-sm max-h-[85vh] overflow-y-auto border border-white/20 shadow-2xl"
+              className="glass-panel rounded-3xl p-6 w-full max-w-sm max-h-[85vh] overflow-y-auto border border-white/20 shadow-2xl flex flex-col"
             >
+              {/* Modal Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-white flex items-center space-x-2">
                   <Heart className="w-5 h-5 text-[#FF4F81] fill-current" />
-                  <span>Create Shared Memory</span>
+                  <span>Save to Memories</span>
                 </h2>
-                <button onClick={() => setIsCreating(false)}>
-                  <X className="w-5 h-5 text-white/60 hover:text-white" />
+                <button
+                  onClick={() => {
+                    setIsCreating(false);
+                    setSelectedFiles([]);
+                  }}
+                  className="p-1 text-white/60 hover:text-white cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleCreateMemory} className="space-y-3.5">
-                {/* Media Picker */}
+              <form onSubmit={handleSaveMemories} className="space-y-4 flex-1 flex flex-col justify-between">
                 <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">
-                    Photo / Video
-                  </label>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*,video/*"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                  />
-                  {mediaPreview ? (
-                    <div className="relative aspect-video rounded-xl overflow-hidden border border-white/20">
-                      <img src={mediaPreview} alt="preview" className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMediaFile(null);
-                          setMediaPreview(null);
-                        }}
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 text-white flex items-center justify-center"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ) : (
+                  {/* Selected Photos Multi-Grid Preview */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-white/90">
+                      {selectedFiles.length} {selectedFiles.length === 1 ? 'item' : 'items'} selected
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-xs text-[#FF91B5] hover:text-white flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add more</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1 bg-[#101019] rounded-2xl border border-white/10">
+                    {selectedFiles.map((item) => (
+                      <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden border border-white/10 group">
+                        <img src={item.previewUrl} alt="preview" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSelectedFile(item.id)}
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 text-white flex items-center justify-center cursor-pointer hover:bg-[#FF4F81] transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Add More Tile */}
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-white/20 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-[#FF4F81] transition-colors"
+                      className="aspect-square rounded-xl border border-dashed border-white/20 flex flex-col items-center justify-center cursor-pointer hover:border-[#FF4F81] transition-colors text-white/50 hover:text-white"
                     >
-                      <Upload className="w-6 h-6 text-white/50 mb-1.5" />
-                      <span className="text-xs text-white/70">Upload photo or video</span>
+                      <Plus className="w-5 h-5 mb-0.5" />
+                      <span className="text-[10px]">Add</span>
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                {/* Title */}
-                <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Memory Title</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. That Beautiful Evening ❤️"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
-                  />
-                </div>
+                  {/* Optional Custom Title (Not required!) */}
+                  <div className="mt-3.5">
+                    <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">
+                      Album / Memory Title <span className="text-[10px] text-white/40">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Sunset Moments (or leave blank)"
+                      value={optionalTitle}
+                      onChange={(e) => setOptionalTitle(e.target.value)}
+                      className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
+                    />
+                  </div>
 
-                {/* Description */}
-                <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Description</label>
-                  <textarea
-                    rows={2}
-                    placeholder="What made this moment unforgettable?"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
-                  />
-                </div>
-
-                {/* Date & Location */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
+                  {/* Date */}
+                  <div className="mt-3">
                     <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Date</label>
                     <input
                       type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Location</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Sunset Cove"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      value={optionalDate}
+                      onChange={(e) => setOptionalDate(e.target.value)}
                       className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
                     />
                   </div>
                 </div>
 
-                {/* Secret Note */}
-                <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Romantic Whisper (Note)</label>
-                  <input
-                    type="text"
-                    placeholder="A sweet secret note for us..."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
-                  />
-                </div>
-
-                {/* Submit */}
+                {/* Instant Save Button */}
                 <button
                   type="submit"
-                  disabled={isSubmitting || !title || !mediaFile}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-95 disabled:opacity-50 transition-opacity"
+                  disabled={isSubmitting || selectedFiles.length === 0}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-95 disabled:opacity-50 transition-opacity flex items-center justify-center space-x-2 cursor-pointer mt-4"
                 >
-                  {isSubmitting ? 'Saving Memory...' : 'Save to Our Memories ❤️'}
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Saving {selectedFiles.length} {selectedFiles.length === 1 ? 'Memory' : 'Memories'}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Save {selectedFiles.length} {selectedFiles.length === 1 ? 'Photo' : 'Photos'} to Memories ❤️</span>
+                    </>
+                  )}
                 </button>
               </form>
             </motion.div>
@@ -372,3 +422,4 @@ export const MemoriesView: React.FC = () => {
     </div>
   );
 };
+

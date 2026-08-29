@@ -1,35 +1,58 @@
 /**
  * KA² — HEAVEN Universal API Client
- * Supports Live Remote Backend with Automatic Client-Side Offline Engine
+ * Supports Live Remote Backend with Automatic Client-Side Offline Fallback
  */
 
-import { UserProfile, Message, MemoryItem, LoveNoteItem, VaultItem, TimelineMilestone, AppSettings, DeviceSession, INITIAL_APP_SETTINGS } from '@ka2/shared';
+import {
+  UserProfile,
+  Message,
+  MemoryItem,
+  LoveNoteItem,
+  VaultItem,
+  TimelineMilestone,
+  AppSettings,
+  INITIAL_APP_SETTINGS,
+  BatchCreateMemoriesInput,
+} from '@ka2/shared';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname || 'localhost';
+    if (window.location.port === '5173') {
+      return `http://${hostname}:5000/api`;
+    }
+    return '/api';
+  }
+  return 'http://localhost:5000/api';
+};
 
-// Default Pre-seeded Users
+// Default Pre-seeded Users with unified UUIDs
+const KEERTHI_ID = 'a1111111-1111-1111-1111-111111111111';
+const ANU_ID = 'b2222222-2222-2222-2222-222222222222';
+
 const INITIAL_USERS: UserProfile[] = [
   {
-    id: '11111111-1111-1111-1111-111111111111',
+    id: KEERTHI_ID,
     email: 'keerthi@ka2heaven.local',
     name: 'Keerthi Adarsh',
     nickname: 'Keerthi',
     role: 'admin',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
-    bio: 'Together in our eternal heaven ❤️',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+    bio: 'Architect of our digital universe. Forever yours, Anu ❤️',
     presenceStatus: 'online',
     lastActive: new Date().toISOString(),
     createdAt: '2026-08-28T00:00:00.000Z',
     updatedAt: new Date().toISOString(),
   },
   {
-    id: '22222222-2222-2222-2222-222222222222',
+    id: ANU_ID,
     email: 'anu@ka2heaven.local',
     name: 'Anu Sri',
     nickname: 'Anu',
     role: 'user',
-    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300',
-    bio: 'My heart belongs to Keerthi ✨',
+    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=faces',
+    bio: 'My heart, my home, my Keerthi. In our private Heaven ✨',
     presenceStatus: 'online',
     lastActive: new Date().toISOString(),
     createdAt: '2026-08-28T00:00:00.000Z',
@@ -40,31 +63,33 @@ const INITIAL_USERS: UserProfile[] = [
 const INITIAL_MEMORIES: MemoryItem[] = [
   {
     id: 'mem-1',
-    title: 'Our First Sunset Together',
-    description: 'Watching the sky turn rose gold with you.',
-    date: '2026-08-28',
-    location: 'Heaven Horizon',
+    title: 'That Magical Sunset Evening ❤️',
+    description: 'The sky turned shades of lavender and rose, just like our dreams.',
+    date: '2026-08-15',
+    location: 'Sunset View Point',
     category: 'photos',
-    mediaUrl: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800',
+    mediaUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800&q=80',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=300&q=80',
     mediaType: 'image',
     isFavorite: true,
-    notes: 'The moment time stood still ❤️',
-    createdBy: '11111111-1111-1111-1111-111111111111',
+    notes: 'You looked at me and the entire universe felt peaceful.',
+    createdBy: KEERTHI_ID,
     createdAt: '2026-08-28T12:00:00.000Z',
     updatedAt: '2026-08-28T12:00:00.000Z',
   },
   {
     id: 'mem-2',
-    title: 'Starlit Whispers',
-    description: 'Under our infinite constellation.',
-    date: '2026-08-28',
-    location: 'Private Sanctuary',
-    category: 'moments',
-    mediaUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+    title: 'Our Starry Night Walk ✨',
+    description: 'Walking hand in hand under the celestial glow.',
+    date: '2026-08-20',
+    location: 'Observatory Hill',
+    category: 'photos',
+    mediaUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=300&q=80',
     mediaType: 'image',
     isFavorite: true,
-    notes: 'Every second with you is magic.',
-    createdBy: '22222222-2222-2222-2222-222222222222',
+    notes: 'Counting stars and realizing you shine the brightest.',
+    createdBy: ANU_ID,
     createdAt: '2026-08-28T13:00:00.000Z',
     updatedAt: '2026-08-28T13:00:00.000Z',
   }
@@ -73,12 +98,12 @@ const INITIAL_MEMORIES: MemoryItem[] = [
 const INITIAL_LOVE_NOTES: LoveNoteItem[] = [
   {
     id: 'note-1',
-    senderId: '11111111-1111-1111-1111-111111111111',
+    senderId: KEERTHI_ID,
     senderName: 'Keerthi Adarsh',
-    receiverId: '22222222-2222-2222-2222-222222222222',
-    title: 'To My One & Only Anu',
-    message: 'Every beat of my heart belongs to you. In this private heaven, it will always be just the two of us. Forever and always. ❤️',
-    stationeryStyle: 'rose_gold',
+    receiverId: ANU_ID,
+    title: 'To My Forever Girl ❤️',
+    message: 'Every line of code, every design detail, every second spent building KA² — was inspired by your smile. You are my peace and my greatest blessing.',
+    stationeryStyle: 'romantic_parchment',
     date: '2026-08-28',
     isOpened: true,
     openedAt: '2026-08-28T14:00:00.000Z',
@@ -116,29 +141,29 @@ class ClientEngine {
     return this.getStorage('messages', [
       {
         id: 'msg-1',
-        senderId: '11111111-1111-1111-1111-111111111111',
-        receiverId: '22222222-2222-2222-2222-222222222222',
-        content: 'Welcome to our private heaven, my love ❤️',
+        senderId: KEERTHI_ID,
+        receiverId: ANU_ID,
+        content: 'Welcome to our private Heaven, my love! KA² is finally ready just for us ❤️',
         type: 'text',
-        reactions: [{ id: 'r-1', messageId: 'msg-1', userId: '22222222-2222-2222-2222-222222222222', emoji: '❤️', createdAt: new Date().toISOString() }],
+        reactions: [{ id: 'r-1', messageId: 'msg-1', userId: ANU_ID, emoji: '❤️', createdAt: new Date().toISOString() }],
+        isEdited: false,
+        isDeleted: false,
+        status: 'read',
+        createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+        updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+      },
+      {
+        id: 'msg-2',
+        senderId: ANU_ID,
+        receiverId: KEERTHI_ID,
+        content: 'Keerthi, it looks breathtaking! A heaven made for two... I love you so much ❤️✨',
+        type: 'text',
+        reactions: [{ id: 'r-2', messageId: 'msg-2', userId: KEERTHI_ID, emoji: '😍', createdAt: new Date().toISOString() }],
         isEdited: false,
         isDeleted: false,
         status: 'read',
         createdAt: new Date(Date.now() - 3600000).toISOString(),
         updatedAt: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        id: 'msg-2',
-        senderId: '22222222-2222-2222-2222-222222222222',
-        receiverId: '11111111-1111-1111-1111-111111111111',
-        content: 'I love it here so much! Where it’s just us ✨',
-        type: 'text',
-        reactions: [{ id: 'r-2', messageId: 'msg-2', userId: '11111111-1111-1111-1111-111111111111', emoji: '😍', createdAt: new Date().toISOString() }],
-        isEdited: false,
-        isDeleted: false,
-        status: 'read',
-        createdAt: new Date(Date.now() - 1800000).toISOString(),
-        updatedAt: new Date(Date.now() - 1800000).toISOString(),
       }
     ]);
   }
@@ -176,6 +201,11 @@ class ClientEngine {
     this.setStorage('vault_items', [item, ...all]);
   }
 
+  public addVaultItems(items: VaultItem[]) {
+    const all = this.getStorage<VaultItem[]>('vault_items', []);
+    this.setStorage('vault_items', [...items, ...all]);
+  }
+
   public deleteVaultItem(itemId: string) {
     const all = this.getStorage<VaultItem[]>('vault_items', []);
     this.setStorage('vault_items', all.filter(i => i.id !== itemId));
@@ -197,50 +227,136 @@ class ApiService {
   private currentUserId: string | null = null;
 
   constructor() {
-    this.accessToken = localStorage.getItem('ka2_access_token');
-    this.currentUserId = localStorage.getItem('ka2_current_user_id');
+    this.initSession();
   }
 
-  public setTokens(access: string, userId?: string) {
+  private initSession() {
+    if (typeof window !== 'undefined') {
+      try {
+        this.accessToken = sessionStorage.getItem('ka2_access_token') || localStorage.getItem('ka2_access_token');
+        this.currentUserId = sessionStorage.getItem('ka2_current_user_id') || localStorage.getItem('ka2_current_user_id');
+      } catch (e) {
+        console.warn('Storage read error:', e);
+      }
+    }
+  }
+
+  public setTokens(access: string, refresh?: string, userId?: string) {
     this.accessToken = access;
-    localStorage.setItem('ka2_access_token', access);
     if (userId) {
       this.currentUserId = userId;
-      localStorage.setItem('ka2_current_user_id', userId);
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        // Isolate per-tab in sessionStorage
+        sessionStorage.setItem('ka2_access_token', access);
+        if (refresh) sessionStorage.setItem('ka2_refresh_token', refresh);
+        if (userId) sessionStorage.setItem('ka2_current_user_id', userId);
+
+        // Also save to localStorage for single-tab persistence
+        localStorage.setItem('ka2_access_token', access);
+        if (refresh) localStorage.setItem('ka2_refresh_token', refresh);
+        if (userId) localStorage.setItem('ka2_current_user_id', userId);
+      } catch (e) {
+        console.warn('Storage write error:', e);
+      }
     }
   }
 
   public clearTokens() {
     this.accessToken = null;
     this.currentUserId = null;
-    localStorage.removeItem('ka2_access_token');
-    localStorage.removeItem('ka2_refresh_token');
-    localStorage.removeItem('ka2_current_user_id');
+    if (typeof window !== 'undefined') {
+      try {
+        sessionStorage.removeItem('ka2_access_token');
+        sessionStorage.removeItem('ka2_refresh_token');
+        sessionStorage.removeItem('ka2_current_user_id');
+        localStorage.removeItem('ka2_access_token');
+        localStorage.removeItem('ka2_refresh_token');
+        localStorage.removeItem('ka2_current_user_id');
+      } catch (e) {
+        console.warn('Storage clear error:', e);
+      }
+    }
   }
 
   public getAccessToken(): string | null {
-    return this.accessToken;
+    if (this.accessToken) return this.accessToken;
+    if (typeof window !== 'undefined') {
+      try {
+        const sess = sessionStorage.getItem('ka2_access_token');
+        if (sess) {
+          this.accessToken = sess;
+          return sess;
+        }
+        const loc = localStorage.getItem('ka2_access_token');
+        if (loc) {
+          this.accessToken = loc;
+          return loc;
+        }
+      } catch {}
+    }
+    return null;
+  }
+
+  public getCurrentUserId(): string | null {
+    if (this.currentUserId) return this.currentUserId;
+    if (typeof window !== 'undefined') {
+      try {
+        const sess = sessionStorage.getItem('ka2_current_user_id');
+        if (sess) {
+          this.currentUserId = sess;
+          return sess;
+        }
+        const loc = localStorage.getItem('ka2_current_user_id');
+        if (loc) {
+          this.currentUserId = loc;
+          return loc;
+        }
+      } catch {}
+    }
+    return null;
   }
 
   public async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    // If a live remote backend URL is provided and not empty, try remote first
-    if (API_BASE && !API_BASE.includes('localhost:5000')) {
-      try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          ...(options.headers as Record<string, string>),
-        };
-        if (this.accessToken) headers['Authorization'] = `Bearer ${this.accessToken}`;
-
-        const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn('Remote API unavailable, using offline client engine:', e);
+    const apiBase = getApiBase();
+    const token = this.getAccessToken();
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...((options.headers as Record<string, string>) || {}),
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
-    }
 
-    // Fallback: Instant Client-Side Engine for guaranteed 100% uptime on Vercel & Mobile
-    return this.handleClientRequest<T>(endpoint, options);
+      const url = endpoint.startsWith('http')
+        ? endpoint
+        : `${apiBase}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
+      const res = await fetch(url, { ...options, headers });
+      if (res.ok) {
+        return await res.json();
+      }
+
+      const errData = await res.json().catch(() => ({}));
+      if (res.status === 401 || res.status === 403) {
+        throw new Error(errData.error || 'Authentication error');
+      }
+      throw new Error(errData.error || `HTTP error ${res.status}`);
+    } catch (e: any) {
+      if (
+        e.message &&
+        (e.message.includes('Authentication') ||
+          e.message.includes('Invalid') ||
+          e.message.includes('Incorrect') ||
+          e.message.includes('PIN'))
+      ) {
+        throw e;
+      }
+      console.warn('Remote API unavailable, using offline fallback engine:', e.message);
+      return this.handleClientRequest<T>(endpoint, options);
+    }
   }
 
   private async handleClientRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -251,16 +367,18 @@ class ApiService {
     if (endpoint.includes('/auth/login') && method === 'POST') {
       const { email } = body;
       const users = clientEngine.getUsers();
-      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || users[0];
+      const user =
+        users.find(u => u.email.toLowerCase() === (email || '').trim().toLowerCase()) ||
+        users[0];
 
-      this.setTokens(`token_${user.id}`, user.id);
+      this.setTokens(`token_${user.id}`, `refresh_${user.id}`, user.id);
       return {
         user,
         tokens: {
           accessToken: `token_${user.id}`,
           refreshToken: `refresh_${user.id}`,
-          expiresIn: 86400 * 30
-        }
+          expiresIn: 86400 * 30,
+        },
       } as any;
     }
 
@@ -268,14 +386,20 @@ class ApiService {
     if (endpoint.includes('/auth/me')) {
       const users = clientEngine.getUsers();
       const user = users.find(u => u.id === this.currentUserId) || users[0];
-      const partner = users.find(u => u.id !== user.id) || users[1];
-      return { user, partner } as any;
+      const partner = users.find(u => u.id !== user.id) || (user.id === KEERTHI_ID ? users[1] : users[0]);
+      return {
+        user,
+        partner,
+        appSettings: clientEngine.getSettings(),
+      } as any;
     }
 
     // 3. Auth: Profile Update
     if (endpoint.includes('/auth/profile') && method === 'PUT') {
       const users = clientEngine.getUsers();
-      const updated = users.map(u => u.id === this.currentUserId ? { ...u, ...body, updatedAt: new Date().toISOString() } : u);
+      const updated = users.map(u =>
+        u.id === this.currentUserId ? { ...u, ...body, updatedAt: new Date().toISOString() } : u
+      );
       clientEngine.saveUsers(updated);
       const user = updated.find(u => u.id === this.currentUserId);
       return { user } as any;
@@ -300,16 +424,16 @@ class ApiService {
         sessions: [
           {
             id: 'sess-current',
-            userId: this.currentUserId || '11111111-1111-1111-1111-111111111111',
-            deviceName: navigator.userAgent.includes('Mobile') ? 'Mobile Phone' : 'Web Browser',
+            userId: this.currentUserId || KEERTHI_ID,
+            deviceName: typeof navigator !== 'undefined' && navigator.userAgent.includes('Mobile') ? 'Mobile Phone' : 'Web Browser',
             deviceType: 'mobile',
             ipAddress: '127.0.0.1',
-            userAgent: navigator.userAgent,
+            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Browser',
             isCurrent: true,
             lastActive: new Date().toISOString(),
             createdAt: '2026-08-28T00:00:00.000Z',
-          }
-        ]
+          },
+        ],
       } as any;
     }
 
@@ -326,7 +450,7 @@ class ApiService {
         const partner = users.find(u => u.id !== me.id) || users[1];
 
         const newMsg: Message = {
-          id: `msg-${Date.now()}`,
+          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           senderId: me.id,
           receiverId: partner.id,
           content: body.content || '',
@@ -355,10 +479,21 @@ class ApiService {
       const msgs = clientEngine.getMessages();
       const updated = msgs.map(m => {
         if (m.id === msgId) {
-          const existing = m.reactions.find(r => r.userId === this.currentUserId && r.emoji === body.emoji);
+          const existing = m.reactions.find(
+            r => r.userId === this.currentUserId && r.emoji === body.emoji
+          );
           const newReactions = existing
             ? m.reactions.filter(r => r.id !== existing.id)
-            : [...m.reactions, { id: `r-${Date.now()}`, messageId: msgId, userId: this.currentUserId || '11111111-1111-1111-1111-111111111111', emoji: body.emoji, createdAt: new Date().toISOString() }];
+            : [
+                ...m.reactions,
+                {
+                  id: `r-${Date.now()}`,
+                  messageId: msgId,
+                  userId: this.currentUserId || KEERTHI_ID,
+                  emoji: body.emoji,
+                  createdAt: new Date().toISOString(),
+                },
+              ];
           return { ...m, reactions: newReactions };
         }
         return m;
@@ -367,7 +502,37 @@ class ApiService {
       return { success: true } as any;
     }
 
-    // 9. Memories
+    // 9. Memories: Batch
+    if (endpoint.includes('/memories/batch') && method === 'POST') {
+      const { memories: items } = body as BatchCreateMemoriesInput;
+      const memories = clientEngine.getMemories();
+      const now = new Date().toISOString();
+      const created: MemoryItem[] = (items || []).map((item, idx) => {
+        const memDate = item.date || now.split('T')[0];
+        const defaultTitle = `Memory — ${new Date(memDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        return {
+          id: `mem-${Date.now()}-${idx}`,
+          title: item.title?.trim() || defaultTitle,
+          description: item.description || '',
+          date: memDate,
+          location: item.location || 'Our Heaven',
+          category: item.category || 'photos',
+          mediaUrl: item.mediaUrl,
+          thumbnailUrl: item.thumbnailUrl || item.mediaUrl,
+          mediaType: item.mediaType || 'image',
+          isFavorite: Boolean(item.isFavorite),
+          notes: item.notes || '',
+          createdBy: this.currentUserId || KEERTHI_ID,
+          createdAt: now,
+          updatedAt: now,
+        };
+      });
+
+      clientEngine.saveMemories([...created, ...memories]);
+      return { memories: created, success: true } as any;
+    }
+
+    // 9. Memories: Single
     if (endpoint.startsWith('/memories') || endpoint === '/memories') {
       if (method === 'GET') {
         const memories = clientEngine.getMemories();
@@ -375,18 +540,21 @@ class ApiService {
       }
       if (method === 'POST') {
         const memories = clientEngine.getMemories();
+        const memDate = body.date || new Date().toISOString().split('T')[0];
+        const defaultTitle = `Memory — ${new Date(memDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
         const newMem: MemoryItem = {
           id: `mem-${Date.now()}`,
-          title: body.title || 'Untitled Memory',
+          title: body.title?.trim() || defaultTitle,
           description: body.description || '',
-          date: body.date || new Date().toISOString().split('T')[0],
+          date: memDate,
           location: body.location || 'Our Heaven',
           category: body.category || 'photos',
-          mediaUrl: body.mediaUrl || 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800',
+          mediaUrl: body.mediaUrl || 'https://images.unsplash.com/photo-1518173946687-a4c8a383392e?w=800',
           mediaType: body.mediaType || 'image',
           isFavorite: Boolean(body.isFavorite),
           notes: body.notes || '',
-          createdBy: this.currentUserId || '11111111-1111-1111-1111-111111111111',
+          createdBy: this.currentUserId || KEERTHI_ID,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -412,8 +580,8 @@ class ApiService {
           senderId: me.id,
           senderName: me.name,
           receiverId: partner.id,
-          title: body.title,
-          message: body.message,
+          title: body.title || 'Love Note',
+          message: body.message || '',
           stationeryStyle: body.stationeryStyle || 'rose_gold',
           photoUrl: body.photoUrl,
           date: new Date().toISOString().split('T')[0],
@@ -425,26 +593,54 @@ class ApiService {
       }
     }
 
-    // 11. Vault
+    // 11. Vault: Batch
+    if (endpoint.includes('/vault/batch') && method === 'POST') {
+      const { items } = body;
+      const now = new Date().toISOString();
+      const created: VaultItem[] = (items || []).map((item: any, idx: number) => ({
+        id: `vault-${Date.now()}-${idx}`,
+        ownerId: this.currentUserId || KEERTHI_ID,
+        vaultType: item.vaultType || 'shared',
+        title: item.title || `Secret Photo — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
+        itemType: item.itemType || 'photo',
+        encryptedData: item.encryptedData,
+        iv: item.iv,
+        authTag: item.authTag || '',
+        fileUrl: item.fileUrl,
+        fileSize: item.fileSize,
+        mimeType: item.mimeType,
+        createdAt: now,
+        updatedAt: now,
+      }));
+      clientEngine.addVaultItems(created);
+      return { items: created, success: true } as any;
+    }
+
+    // 11. Vault: Single
     if (endpoint.startsWith('/vault')) {
       const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
       const vaultType = urlParams.get('vaultType') || 'shared';
 
       if (method === 'GET') {
-        const items = clientEngine.getVaultItems(vaultType, this.currentUserId || '11111111-1111-1111-1111-111111111111');
+        const items = clientEngine.getVaultItems(
+          vaultType,
+          this.currentUserId || KEERTHI_ID
+        );
         return { items } as any;
       }
       if (method === 'POST') {
         const newItem: VaultItem = {
           id: `vault-${Date.now()}`,
-          ownerId: this.currentUserId || '11111111-1111-1111-1111-111111111111',
+          ownerId: this.currentUserId || KEERTHI_ID,
           vaultType: body.vaultType || 'shared',
-          title: body.title,
+          title: body.title || `Secret Item — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
           itemType: body.itemType || 'note',
           encryptedData: body.encryptedData,
           iv: body.iv,
           authTag: body.authTag || '',
           fileUrl: body.fileUrl,
+          fileSize: body.fileSize,
+          mimeType: body.mimeType,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -488,8 +684,29 @@ class ApiService {
     return { success: true } as any;
   }
 
-  // Instant Media Upload (Converts directly to persistent Object/Base64 URL)
-  public async uploadMedia(file: File): Promise<{ fileUrl: string; fileName: string; fileSize: number; mimeType: string }> {
+  // Upload Single Media File
+  public async uploadMedia(
+    file: File
+  ): Promise<{ fileUrl: string; fileName: string; fileSize: number; mimeType: string }> {
+    try {
+      const apiBase = getApiBase();
+      const formData = new FormData();
+      formData.append('file', file);
+      const token = this.getAccessToken();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(`${apiBase}/media/upload`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn('Remote media upload failed, fallback to local data URL:', e);
+    }
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -503,6 +720,36 @@ class ApiService {
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+  }
+
+  // Upload Multiple Media Files
+  public async uploadMultipleMedia(
+    files: File[]
+  ): Promise<Array<{ fileUrl: string; fileName: string; fileSize: number; mimeType: string }>> {
+    if (files.length === 0) return [];
+
+    try {
+      const apiBase = getApiBase();
+      const formData = new FormData();
+      files.forEach(f => formData.append('files', f));
+      const headers: Record<string, string> = {};
+      const token = this.getAccessToken();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const res = await fetch(`${apiBase}/media/upload-multiple`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.files;
+      }
+    } catch (e) {
+      console.warn('Remote multi-upload failed, fallback to sequential uploads:', e);
+    }
+
+    return Promise.all(files.map(f => this.uploadMedia(f)));
   }
 }
 

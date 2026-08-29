@@ -1,6 +1,16 @@
 import { AdminTelemetry, AppSettings, AuditLog, DeviceSession, INITIAL_APP_SETTINGS } from '@ka2/shared';
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const getAdminApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname || 'localhost';
+    if (window.location.port === '5174') {
+      return `http://${hostname}:5000/api`;
+    }
+    return '/api';
+  }
+  return 'http://localhost:5000/api';
+};
 
 class AdminApiService {
   private token: string | null = null;
@@ -24,19 +34,22 @@ class AdminApiService {
   }
 
   public async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    if (API_BASE && !API_BASE.includes('localhost:5000')) {
-      try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          ...(options.headers as Record<string, string>),
-        };
-        if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
+    const apiBase = getAdminApiBase();
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...((options.headers as Record<string, string>) || {}),
+      };
+      if (this.token) headers['Authorization'] = `Bearer ${this.token}`;
 
-        const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
-        if (res.ok) return await res.json();
-      } catch (e) {
-        console.warn('Admin remote API unavailable, using offline fallback:', e);
-      }
+      const url = endpoint.startsWith('http')
+        ? endpoint
+        : `${apiBase}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
+      const res = await fetch(url, { ...options, headers });
+      if (res.ok) return await res.json();
+    } catch (e) {
+      console.warn('Admin remote API unavailable, using offline fallback:', e);
     }
 
     return this.handleClientAdminRequest<T>(endpoint, options);

@@ -1,6 +1,7 @@
 {
   "name": "ka2-heaven",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "description": "KA² — HEAVEN: Private Couple Communication, Realtime, Secure, Romantic, Cinematic 3D App",
   "workspaces": [
@@ -15,7 +16,8 @@
     "build:backend": "npm --workspace=backend run build",
     "build:mobile": "npm --workspace=mobile run build",
     "build:admin": "npm --workspace=admin run build",
-    "build": "npm run build:shared && npm run build:backend && npm run build:mobile && npm run build:admin",
+    "build:vercel": "npm run build:shared && npm run build:mobile && npm run build:admin && node scripts/copy-admin.js",
+    "build": "npm run build:shared && npm run build:backend && npm run build:mobile && npm run build:admin && node scripts/copy-admin.js",
     "dev:backend": "npm --workspace=backend run dev",
     "dev:mobile": "npm --workspace=mobile run dev",
     "dev:admin": "npm --workspace=admin run dev",

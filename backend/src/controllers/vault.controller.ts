@@ -42,17 +42,20 @@ export class VaultController {
         mimeType,
       } = req.body;
 
-      if (!title || !encryptedData || !iv) {
-        res.status(400).json({ error: 'Title, encrypted payload, and IV are required.' });
+      if (!encryptedData || !iv) {
+        res.status(400).json({ error: 'Encrypted payload and IV are required.' });
         return;
       }
+
+      const defaultTitle = `Secret ${itemType === 'photo' ? 'Photo' : itemType === 'video' ? 'Video' : 'Note'} — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+      const resolvedTitle = (title && title.trim()) ? title.trim() : defaultTitle;
 
       const data = db.getData();
       const newItem = {
         id: uuidv4(),
         ownerId: req.user!.id,
         vaultType,
-        title: title.trim(),
+        title: resolvedTitle,
         itemType,
         encryptedData,
         iv,
@@ -70,6 +73,52 @@ export class VaultController {
       res.status(201).json({ item: newItem });
     } catch (err) {
       res.status(500).json({ error: 'Failed to save vault item.' });
+    }
+  }
+
+  public static async createBatchVaultItems(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { items } = req.body;
+      if (!Array.isArray(items) || items.length === 0) {
+        res.status(400).json({ error: 'Items array is required.' });
+        return;
+      }
+
+      const data = db.getData();
+      const createdItems: any[] = [];
+      const now = new Date().toISOString();
+
+      for (const item of items) {
+        if (!item.encryptedData || !item.iv) continue;
+
+        const itemType = item.itemType || 'photo';
+        const defaultTitle = `Secret ${itemType === 'photo' ? 'Photo' : itemType === 'video' ? 'Video' : 'Note'} — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+        const resolvedTitle = (item.title && item.title.trim()) ? item.title.trim() : defaultTitle;
+
+        const newItem = {
+          id: uuidv4(),
+          ownerId: req.user!.id,
+          vaultType: item.vaultType || 'shared',
+          title: resolvedTitle,
+          itemType,
+          encryptedData: item.encryptedData,
+          iv: item.iv,
+          authTag: item.authTag || '',
+          fileUrl: item.fileUrl,
+          fileSize: item.fileSize,
+          mimeType: item.mimeType,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        data.vaultItems.unshift(newItem);
+        createdItems.push(newItem);
+      }
+
+      await db.persist();
+      res.status(201).json({ items: createdItems, success: true });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to create batch vault items.' });
     }
   }
 

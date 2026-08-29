@@ -31,6 +31,32 @@ router.post('/upload', authenticateJWT, upload.single('file'), (req: Authenticat
   }
 });
 
+// Upload Multiple Media Files
+router.post('/upload-multiple', authenticateJWT, upload.array('files', 20), (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const files = req.files as Express.Multer.File[];
+    if (!files || files.length === 0) {
+      res.status(400).json({ error: 'No files uploaded.' });
+      return;
+    }
+
+    const host = req.get('host') || `localhost:${config.port}`;
+    const protocol = req.protocol || 'http';
+
+    const uploaded = files.map(file => ({
+      fileUrl: `${protocol}://${host}/uploads/${file.filename}`,
+      fileName: file.originalname,
+      storedName: file.filename,
+      fileSize: file.size,
+      mimeType: file.mimetype,
+    }));
+
+    res.status(201).json({ files: uploaded });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Multiple file upload failed.' });
+  }
+});
+
 // Authenticated / Secure Media Stream
 router.get('/file/:filename', (req, res): void => {
   const { filename } = req.params;

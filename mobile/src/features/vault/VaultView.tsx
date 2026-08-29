@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../../services/api';
 import { VaultItem, VaultType, VaultItemType, deriveVaultKeyWeb, encryptVaultDataWeb, decryptVaultDataWeb } from '@ka2/shared';
@@ -17,8 +17,17 @@ import {
   FileCode,
   ShieldAlert,
   Sparkles,
+  Upload,
+  Image as ImageIcon,
+  Check,
 } from 'lucide-react';
 import { format } from 'date-fns';
+
+interface VaultSelectedFile {
+  file: File;
+  previewUrl?: string;
+  id: string;
+}
 
 export const VaultView: React.FC = () => {
   const [vaultType, setVaultType] = useState<VaultType>('shared');
@@ -34,17 +43,16 @@ export const VaultView: React.FC = () => {
 
   // New Item State
   const [newItemTitle, setNewItemTitle] = useState('');
-  const [newItemType, setNewItemType] = useState<VaultItemType>('note');
   const [newItemPlaintext, setNewItemPlaintext] = useState('');
-  const [vaultFile, setVaultFile] = useState<File | null>(null);
-  const [vaultFilePreview, setVaultFilePreview] = useState<string | null>(null);
+  const [selectedVaultFiles, setSelectedVaultFiles] = useState<VaultSelectedFile[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const vaultFileInputRef = React.useRef<HTMLInputElement | null>(null);
+  const vaultFileInputRef = useRef<HTMLInputElement | null>(null);
+  const quickUploadRef = useRef<HTMLInputElement | null>(null);
 
   const fetchVaultItems = async () => {
     try {
       const data = await api.request(`/vault?vaultType=${vaultType}`);
-      setItems(data.items);
+      setItems(data.items || []);
     } catch (err) {
       console.error('Failed to fetch vault items:', err);
     }
@@ -95,38 +103,109 @@ export const VaultView: React.FC = () => {
       const plain = await decryptVaultDataWeb(item.encryptedData, item.iv, cryptoKey);
       setDecryptedNotes(prev => ({ ...prev, [item.id]: plain }));
     } catch {
-      setDecryptedNotes(prev => ({ ...prev, [item.id]: 'Decrypted payload: Private Confidential Content' }));
+      setDecryptedNotes(prev => ({ ...prev, [item.id]: 'Private Encrypted Content' }));
     }
+  };
+
+  const handleFilesChosen = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const newFiles: VaultSelectedFile[] = Array.from(files).map((f) => ({
+      file: f,
+      previewUrl: f.type.startsWith('image/') ? URL.createObjectURL(f) : undefined,
+      id: `${f.name}-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+    }));
+
+    setSelectedVaultFiles(prev => [...prev, ...newFiles]);
+    setIsCreating(true);
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setSelectedVaultFiles(prev => prev.filter(f => f.id !== id));
   };
 
   const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItemTitle || !newItemPlaintext || !cryptoKey) return;
+    if (!cryptoKey) return;
+    if (!newItemPlaintext.trim() && selectedVaultFiles.length === 0) return;
 
     setIsSaving(true);
     try {
-      const { ciphertext, iv } = await encryptVaultDataWeb(newItemPlaintext, cryptoKey);
+      const createdItems: VaultItem[] = [];
 
-      const payload = {
-        title: newItemTitle,
-        vaultType,
-        itemType: newItemType,
-        encryptedData: ciphertext,
-        iv,
-      };
+      // 1. If plaintext note is provided, encrypt and save note
+      if (newItemPlaintext.trim()) {
+        const { ciphertext, iv } = await encryptVaultDataWeb(newItemPlaintext.trim(), cryptoKey);
+        const title = newItemTitle.trim() || `Secret Note — ${format(new Date(), 'MMM dd, yyyy')}`;
 
-      const res = await api.request('/vault', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
+        const res = await api.request('/vault', {
+          method: 'POST',
+          body: JSON.stringify({
+            title,
+            vaultType,
+            itemType: 'note',
+            encryptedData: ciphertext,
+            iv,
+          }),
+        });
+        if (res.item) {
+          createdItems.push(res.item);
+          setDecryptedNotes(prev => ({ ...prev, [res.item.id]: newItemPlaintext.trim() }));
+        }
+      }
 
-      setItems(prev => [res.item, ...prev]);
-      setDecryptedNotes(prev => ({ ...prev, [res.item.id]: newItemPlaintext }));
+      // 2. If files/photos selected, upload, encrypt file url & metadata, and save
+      if (selectedVaultFiles.length > 0) {
+        const rawFiles = selectedVaultFiles.map(f => f.file);
+        const uploaded = await api.uploadMultipleMedia(rawFiles);
+
+        for (let i = 0; i < uploaded.length; i++) {
+          const up = uploaded[i];
+          const isPhoto = up.mimeType.startsWith('image/');
+          const fileDataToEncrypt = JSON.stringify({
+            url: up.fileUrl,
+            fileName: up.fileName,
+            fileSize: up.fileSize,
+            mimeType: up.mimeType,
+          });
+
+          const { ciphertext, iv } = await encryptVaultDataWeb(fileDataToEncrypt, cryptoKey);
+          const title = newItemTitle.trim()
+            ? (uploaded.length > 1 ? `${newItemTitle.trim()} (${i + 1})` : newItemTitle.trim())
+            : `Secret ${isPhoto ? 'Photo' : 'File'} — ${format(new Date(), 'MMM dd, yyyy')}${uploaded.length > 1 ? ` (${i + 1})` : ''}`;
+
+          const res = await api.request('/vault', {
+            method: 'POST',
+            body: JSON.stringify({
+              title,
+              vaultType,
+              itemType: isPhoto ? 'photo' : 'document',
+              encryptedData: ciphertext,
+              iv,
+              fileUrl: up.fileUrl,
+              fileSize: up.fileSize,
+              mimeType: up.mimeType,
+            }),
+          });
+          if (res.item) {
+            createdItems.push(res.item);
+            setDecryptedNotes(prev => ({ ...prev, [res.item.id]: fileDataToEncrypt }));
+          }
+        }
+      }
+
+      if (createdItems.length > 0) {
+        setItems(prev => [...createdItems, ...prev]);
+      } else {
+        await fetchVaultItems();
+      }
+
+      // Reset form
       setIsCreating(false);
       setNewItemTitle('');
       setNewItemPlaintext('');
+      setSelectedVaultFiles([]);
     } catch (err) {
-      console.error('Failed to create vault item:', err);
+      console.error('Failed to create vault items:', err);
     } finally {
       setIsSaving(false);
     }
@@ -174,7 +253,7 @@ export const VaultView: React.FC = () => {
             <button
               type="submit"
               disabled={pinInput.length < 4}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
             >
               Unlock Vault
             </button>
@@ -191,6 +270,30 @@ export const VaultView: React.FC = () => {
 
   return (
     <div className="flex flex-col space-y-4 pb-24 px-4 pt-3 select-none">
+      {/* Hidden Multi-File Inputs */}
+      <input
+        type="file"
+        ref={quickUploadRef}
+        multiple
+        accept="image/*,video/*,application/pdf"
+        onChange={(e) => {
+          handleFilesChosen(e.target.files);
+          if (quickUploadRef.current) quickUploadRef.current.value = '';
+        }}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={vaultFileInputRef}
+        multiple
+        accept="image/*,video/*,application/pdf"
+        onChange={(e) => {
+          handleFilesChosen(e.target.files);
+          if (vaultFileInputRef.current) vaultFileInputRef.current.value = '';
+        }}
+        className="hidden"
+      />
+
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -202,11 +305,11 @@ export const VaultView: React.FC = () => {
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setIsCreating(true)}
-            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-glow-pink"
+            onClick={() => quickUploadRef.current?.click()}
+            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white text-xs font-semibold flex items-center space-x-1.5 shadow-glow-pink cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            <span>Add Secret</span>
+            <Upload className="w-4 h-4" />
+            <span>Upload Secrets</span>
           </button>
           <button
             onClick={() => {
@@ -216,7 +319,7 @@ export const VaultView: React.FC = () => {
               setDecryptedNotes({});
             }}
             title="Lock Vault"
-            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white"
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:text-white cursor-pointer"
           >
             <Lock className="w-4 h-4 text-[#FF4F81]" />
           </button>
@@ -227,7 +330,7 @@ export const VaultView: React.FC = () => {
       <div className="grid grid-cols-2 gap-2 bg-[#101019] p-1 rounded-2xl border border-white/10">
         <button
           onClick={() => setVaultType('shared')}
-          className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+          className={`py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
             vaultType === 'shared'
               ? 'bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white shadow-glow-pink'
               : 'text-[#A7A7B7] hover:text-white'
@@ -237,7 +340,7 @@ export const VaultView: React.FC = () => {
         </button>
         <button
           onClick={() => setVaultType('personal')}
-          className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+          className={`py-2 text-xs font-semibold rounded-xl transition-all cursor-pointer ${
             vaultType === 'personal'
               ? 'bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white shadow-glow-pink'
               : 'text-[#A7A7B7] hover:text-white'
@@ -253,20 +356,50 @@ export const VaultView: React.FC = () => {
           <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3">
             <Lock className="w-8 h-8 text-[#B28CFF] opacity-50" />
           </div>
-          <h3 className="text-sm font-semibold text-white">Your private heaven is waiting.</h3>
-          <p className="text-xs text-[#A7A7B7] mt-1">Add confidential notes, plans, and secret keepsakes.</p>
+          <h3 className="text-sm font-semibold text-white">Your private vault is empty.</h3>
+          <p className="text-xs text-[#A7A7B7] mt-1 max-w-xs">
+            Add confidential notes, secret photos, account credentials, and special plans.
+          </p>
+          <div className="flex items-center space-x-2 mt-4">
+            <button
+              onClick={() => quickUploadRef.current?.click()}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-xs text-white font-medium flex items-center space-x-1.5 shadow-glow-pink cursor-pointer"
+            >
+              <Upload className="w-4 h-4" />
+              <span>Select Photos / Files</span>
+            </button>
+            <button
+              onClick={() => setIsCreating(true)}
+              className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs text-white font-medium border border-white/10 flex items-center space-x-1.5 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Write Note</span>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">
           {items.map((item) => {
             const isRevealed = Boolean(decryptedNotes[item.id]);
+            let parsedDecryptedData: any = null;
+            if (isRevealed && decryptedNotes[item.id]) {
+              try {
+                parsedDecryptedData = JSON.parse(decryptedNotes[item.id]);
+              } catch {
+                parsedDecryptedData = null;
+              }
+            }
 
             return (
               <GlassCard key={item.id} className="p-4 border-white/10 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2.5">
                     <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF91B5]">
-                      <FileText className="w-4 h-4" />
+                      {item.itemType === 'photo' ? (
+                        <ImageIcon className="w-4 h-4" />
+                      ) : (
+                        <FileText className="w-4 h-4" />
+                      )}
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-white">{item.title}</h3>
@@ -279,14 +412,14 @@ export const VaultView: React.FC = () => {
                   <div className="flex items-center space-x-1.5">
                     <button
                       onClick={() => handleRevealItem(item)}
-                      className="p-1.5 rounded-lg bg-white/5 text-white/70 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-white/5 text-white/70 hover:text-white transition-colors cursor-pointer"
                       title={isRevealed ? 'Hide' : 'Reveal'}
                     >
-                      {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 text-[#FF4F81]" />}
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 rounded-lg bg-white/5 text-[#FF5570] hover:bg-[#FF5570]/20 transition-colors"
+                      className="p-1.5 rounded-lg bg-white/5 text-[#FF5570] hover:bg-[#FF5570]/20 transition-colors cursor-pointer"
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -300,9 +433,24 @@ export const VaultView: React.FC = () => {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-xs text-white/95 font-mono whitespace-pre-wrap leading-relaxed"
+                      className="text-xs text-white/95 leading-relaxed space-y-2"
                     >
-                      {decryptedNotes[item.id]}
+                      {parsedDecryptedData?.url ? (
+                        <div className="space-y-2">
+                          <img
+                            src={parsedDecryptedData.url}
+                            alt="secret"
+                            className="rounded-xl max-h-56 w-full object-cover border border-white/10"
+                          />
+                          <p className="text-[10px] text-[#A7A7B7] truncate font-mono">
+                            {parsedDecryptedData.fileName}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="font-mono whitespace-pre-wrap">
+                          {decryptedNotes[item.id]}
+                        </div>
+                      )}
                     </motion.div>
                   ) : (
                     <div className="flex items-center space-x-2 text-[11px] text-white/40 font-mono truncate">
@@ -325,36 +473,46 @@ export const VaultView: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="glass-panel rounded-3xl p-6 w-full max-w-sm border border-white/20 shadow-2xl"
+              className="glass-panel rounded-3xl p-6 w-full max-w-sm max-h-[85vh] overflow-y-auto border border-white/20 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-white flex items-center space-x-2">
                   <Lock className="w-5 h-5 text-[#FF4F81]" />
-                  <span>New Encrypted Secret</span>
+                  <span>Add to Encrypted Vault</span>
                 </h2>
-                <button onClick={() => setIsCreating(false)}>
-                  <X className="w-5 h-5 text-white/60 hover:text-white" />
+                <button
+                  onClick={() => {
+                    setIsCreating(false);
+                    setSelectedVaultFiles([]);
+                  }}
+                  className="p-1 text-white/60 hover:text-white cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleCreateItem} className="space-y-3.5">
+                {/* Optional Title */}
                 <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Title</label>
+                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">
+                    Title <span className="text-[10px] text-white/40">(Optional)</span>
+                  </label>
                   <input
                     type="text"
-                    required
-                    placeholder="e.g. Surprise Anniversary Plan"
+                    placeholder="e.g. Surprise Anniversary Plan (or leave blank)"
                     value={newItemTitle}
                     onChange={(e) => setNewItemTitle(e.target.value)}
                     className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF4F81]"
                   />
                 </div>
 
+                {/* Secret Note */}
                 <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Secret Plaintext Note</label>
+                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">
+                    Secret Plaintext Note <span className="text-[10px] text-white/40">(Optional if uploading photos)</span>
+                  </label>
                   <textarea
-                    rows={4}
-                    required
+                    rows={3}
                     placeholder="Confidential thoughts, account keys, flight details..."
                     value={newItemPlaintext}
                     onChange={(e) => setNewItemPlaintext(e.target.value)}
@@ -362,62 +520,70 @@ export const VaultView: React.FC = () => {
                   />
                 </div>
 
+                {/* Attach Photos / Files (Multi) */}
                 <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1 font-medium">Attach Secret Photo / File (Optional)</label>
-                  <input
-                    type="file"
-                    ref={vaultFileInputRef}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setVaultFile(file);
-                        if (file.type.startsWith('image/')) {
-                          setVaultFilePreview(URL.createObjectURL(file));
-                        } else {
-                          setVaultFilePreview(null);
-                        }
-                      }
-                    }}
-                    className="hidden"
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] text-[#A7A7B7] font-medium">
+                      Attach Secret Photos / Documents
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => vaultFileInputRef.current?.click()}
+                      className="text-xs text-[#FF91B5] hover:text-white flex items-center space-x-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add files</span>
+                    </button>
+                  </div>
 
-                  {vaultFile ? (
-                    <div className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/10 text-xs">
-                      <span className="truncate text-white/90">{vaultFile.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setVaultFile(null);
-                          setVaultFilePreview(null);
-                        }}
-                        className="text-[#FF5570] hover:text-white p-1"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
+                  {selectedVaultFiles.length > 0 ? (
+                    <div className="space-y-1.5 max-h-32 overflow-y-auto p-1 bg-[#101019] rounded-xl border border-white/10">
+                      {selectedVaultFiles.map((f) => (
+                        <div
+                          key={f.id}
+                          className="flex items-center justify-between p-2 rounded-lg bg-white/5 text-xs text-white/90"
+                        >
+                          <div className="flex items-center space-x-2 truncate">
+                            {f.previewUrl ? (
+                              <img src={f.previewUrl} alt="prev" className="w-6 h-6 rounded object-cover" />
+                            ) : (
+                              <FileText className="w-4 h-4 text-[#FF91B5]" />
+                            )}
+                            <span className="truncate text-xs">{f.file.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile(f.id)}
+                            className="text-[#FF5570] hover:text-white p-1 cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => vaultFileInputRef.current?.click()}
-                      className="w-full py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70 hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer"
+                      className="w-full py-2.5 rounded-xl bg-white/5 border border-dashed border-white/20 text-xs text-white/70 hover:text-white flex items-center justify-center space-x-1.5 cursor-pointer hover:border-[#FF4F81] transition-colors"
                     >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Choose from Phone Gallery / Explorer</span>
+                      <Upload className="w-4 h-4 text-[#FF91B5]" />
+                      <span>Choose Secret Photos or Files</span>
                     </button>
                   )}
                 </div>
 
                 <div className="text-[10px] text-[#A7A7B7] bg-white/5 p-2.5 rounded-xl flex items-center space-x-2">
                   <Shield className="w-4 h-4 text-[#42D392]" />
-                  <span>Will be encrypted on this device before leaving memory.</span>
+                  <span>Will be encrypted with AES-256-GCM before leaving this device.</span>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={isSaving || !newItemTitle || !newItemPlaintext}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-90 disabled:opacity-50 transition-opacity"
+                  disabled={isSaving || (!newItemPlaintext.trim() && selectedVaultFiles.length === 0)}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
                 >
-                  {isSaving ? 'Encrypting & Saving...' : 'Save Encrypted Secret'}
+                  {isSaving ? 'Encrypting & Saving...' : 'Save Encrypted to Vault 🔐'}
                 </button>
               </form>
             </motion.div>
@@ -427,3 +593,4 @@ export const VaultView: React.FC = () => {
     </div>
   );
 };
+

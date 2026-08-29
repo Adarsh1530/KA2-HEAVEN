@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       body: JSON.stringify({ email, password: pass, deviceName }),
     });
 
-    api.setTokens(data.tokens.accessToken, data.tokens.refreshToken);
+    api.setTokens(data.tokens.accessToken, data.tokens.refreshToken, data.user.id);
     setUser(data.user);
     await refreshProfile();
     socketService.connect();
