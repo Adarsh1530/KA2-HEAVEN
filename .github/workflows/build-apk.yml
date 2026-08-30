@@ -38,20 +38,16 @@ jobs:
           # 2. Let Flutter officially create Android files with full Gradle wrapper
           flutter create --org world.ka2 --project-name ka2_heaven --platforms android .
 
-          # 3. Add Android permissions and cleartext traffic support in AndroidManifest.xml
-          sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"\/>\n    <uses-permission android:name="android.permission.CAMERA"\/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"\/>\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"\/>\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"\/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"\/>\n    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"\/>\n    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"\/>\n    <uses-permission android:name="android.permission.VIBRATE"\/>\n    <uses-permission android:name="android.permission.WAKE_LOCK"\/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/>\n\n    <application android:usesCleartextTraffic="true"/' android/app/src/main/AndroidManifest.xml
+          # 3. Apply safe Python configuration for permissions & minSdkVersion 24
+          python3 ../scripts/configure_android.py
 
-          # 4. Ensure minSdkVersion is 24 for WebView & WebRTC compatibility
-          sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 24/g' android/app/build.gradle
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/g' android/app/build.gradle
-
-          # 5. Make Gradle wrapper executable
+          # 4. Make Gradle wrapper executable
           chmod +x android/gradlew
 
-          # 6. Fetch dependencies
+          # 5. Fetch dependencies
           flutter pub get
 
-          # 7. Compile Release APK
+          # 6. Compile Release APK
           flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK as Downloadable Artifact
