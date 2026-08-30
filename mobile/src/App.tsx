@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#07070C] text-white flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl border-x border-white/5">
+    <div className="min-h-screen bg-[var(--primary-bg)] text-[var(--text-main)] flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl border-x border-white/5 transition-colors duration-300">
       {/* App PIN / Biometric Lock Screen */}
       <PinLockModal isOpen={isLocked} />
 

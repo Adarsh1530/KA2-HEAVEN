@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Logo } from '../brand/Logo';
 import { useAuth } from '../../context/AuthContext';
-import { useCall } from '../../context/CallContext';
 import { socketService, SocketConnectionState } from '../../services/socket';
 import { ServerConfigModal } from './ServerConfigModal';
-import { Phone, Video, Lock, Globe } from 'lucide-react';
+import { Lock, Globe } from 'lucide-react';
 
 interface TopHeaderProps {
   onOpenStory?: () => void;
 }
 
 export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenStory }) => {
-  const { user, partner, lockApp } = useAuth();
-  const { startCall } = useCall();
+  const { lockApp } = useAuth();
   const [isServerModalOpen, setIsServerModalOpen] = useState(false);
   const [socketState, setSocketState] = useState<SocketConnectionState>('disconnected');
 
@@ -40,7 +38,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenStory }) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center space-x-2">
           {/* Cloud Server Connectivity Status Indicator */}
           <button
             onClick={() => setIsServerModalOpen(true)}
@@ -51,7 +49,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenStory }) => {
                 ? 'Connecting to Cloud...'
                 : 'Server Offline (Tap to setup Cloud Server)'
             }
-            className={`px-2 py-1 rounded-full text-[10px] font-medium flex items-center space-x-1 border transition-all ${
+            className={`px-2.5 py-1 rounded-full text-[10px] font-medium flex items-center space-x-1.5 border transition-all ${
               socketState === 'connected'
                 ? 'bg-[#42D392]/10 border-[#42D392]/30 text-[#42D392]'
                 : socketState === 'connecting'
@@ -74,29 +72,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ onOpenStory }) => {
             <Globe className="w-3 h-3 ml-0.5 opacity-80" />
           </button>
 
-          {/* Quick Voice Call */}
-          <button
-            onClick={() => startCall('voice')}
-            title="Voice Call"
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#42D392] hover:bg-[#42D392]/10 transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-          </button>
-
-          {/* Quick Video Call */}
-          <button
-            onClick={() => startCall('video')}
-            title="Video Call"
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:text-[#9B5CFF] hover:bg-[#9B5CFF]/10 transition-colors"
-          >
-            <Video className="w-4 h-4" />
-          </button>
-
           {/* Lock App Immediately */}
           <button
             onClick={lockApp}
             title="Lock App"
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#FF4F81] hover:bg-[#FF4F81]/10 transition-colors ml-0.5"
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-[#FF4F81] hover:bg-[#FF4F81]/10 transition-colors"
           >
             <Lock className="w-3.5 h-3.5" />
           </button>

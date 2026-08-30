@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { socketService } from '../services/socket';
 import { api } from '../services/api';
+import { notificationService } from '../services/notifications';
 import { useAuth } from './AuthContext';
 import { CallType, CallStatus, SOCKET_EVENTS } from '@ka2/shared';
 
@@ -120,6 +121,8 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
       peerConnectionRef.current = null;
     }
 
+    notificationService.stopCallRingtone();
+
     setRemoteStream(null);
     setCallState('idle');
     setCallId(null);
@@ -190,9 +193,15 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
         avatar: data.callerAvatar,
       });
       setCallState('ringing');
+      notificationService.notifyIncomingCall(
+        data.callerName || partner?.name || 'My Love',
+        data.callType || 'voice',
+        data.callId
+      );
     };
 
     const handleCallAccept = async (data: any) => {
+      notificationService.stopCallRingtone();
       setCallState('connected');
       callStartTimeRef.current = Date.now();
       durationTimerRef.current = setInterval(() => {

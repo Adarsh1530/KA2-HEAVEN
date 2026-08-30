@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '../../services/api';
+import { api, resolveMediaUrl } from '../../services/api';
 import { VaultItem, VaultType, VaultItemType, deriveVaultKeyWeb, encryptVaultDataWeb, decryptVaultDataWeb } from '@ka2/shared';
 import { GlassCard } from '../../components/common/GlassCard';
 import {
@@ -447,7 +447,7 @@ export const VaultView: React.FC = () => {
                       {parsedDecryptedData?.url ? (
                         <div className="space-y-2">
                           <img
-                            src={parsedDecryptedData.url}
+                            src={resolveMediaUrl(parsedDecryptedData.url)}
                             alt="secret"
                             className="rounded-xl max-h-56 w-full object-cover border border-white/10"
                           />

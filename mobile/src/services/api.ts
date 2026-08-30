@@ -73,6 +73,34 @@ export const getApiBase = () => {
   return `${DEFAULT_PRODUCTION_SERVER}/api`;
 };
 
+export const getDefaultAvatar = (name: string): string => {
+  const initial = (name || 'Love').trim().charAt(0).toUpperCase() || '❤️';
+  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><linearGradient id="ka2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%239B5CFF"/><stop offset="100%" stop-color="%23FF4F81"/></linearGradient></defs><rect width="200" height="200" rx="100" fill="url(%23ka2g)"/><text x="50%" y="54%" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="82" fill="%23FFFFFF" text-anchor="middle" dominant-baseline="middle">${initial}</text></svg>`;
+};
+
+export const resolveMediaUrl = (url?: string, fallbackName = 'Love'): string => {
+  if (!url || !url.trim() || url.includes('images.unsplash.com')) {
+    return getDefaultAvatar(fallbackName);
+  }
+  const cleanUrl = url.trim();
+  if (cleanUrl.startsWith('data:') || cleanUrl.startsWith('blob:')) {
+    return cleanUrl;
+  }
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    if (cleanUrl.includes('localhost:5000') || cleanUrl.includes('127.0.0.1:5000')) {
+      const serverBase = typeof window !== 'undefined' && localStorage.getItem('ka2_custom_server_url')
+        ? localStorage.getItem('ka2_custom_server_url')!.replace(/\/$/, '')
+        : DEFAULT_PRODUCTION_SERVER;
+      return cleanUrl.replace(/http:\/\/(localhost|127\.0\.0\.1):5000/, serverBase);
+    }
+    return cleanUrl;
+  }
+  const serverBase = typeof window !== 'undefined' && localStorage.getItem('ka2_custom_server_url')
+    ? localStorage.getItem('ka2_custom_server_url')!.replace(/\/$/, '')
+    : DEFAULT_PRODUCTION_SERVER;
+  return `${serverBase}${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
+};
+
 // Default Pre-seeded Users with unified UUIDs
 const KEERTHI_ID = 'a1111111-1111-1111-1111-111111111111';
 const ANU_ID = 'b2222222-2222-2222-2222-222222222222';
@@ -84,7 +112,7 @@ const INITIAL_USERS: UserProfile[] = [
     name: 'Keerthi Adarsh',
     nickname: 'Keerthi',
     role: 'admin',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+    avatarUrl: getDefaultAvatar('Keerthi'),
     bio: 'Architect of our digital universe. Forever yours, Anu ❤️',
     presenceStatus: 'online',
     lastActive: new Date().toISOString(),
@@ -97,7 +125,7 @@ const INITIAL_USERS: UserProfile[] = [
     name: 'Anu Sri',
     nickname: 'Anu',
     role: 'user',
-    avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=faces',
+    avatarUrl: getDefaultAvatar('Anu'),
     bio: 'My heart, my home, my Keerthi. In our private Heaven ✨',
     presenceStatus: 'online',
     lastActive: new Date().toISOString(),

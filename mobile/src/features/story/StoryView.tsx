@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '../../services/api';
+import { api, resolveMediaUrl } from '../../services/api';
 import { TimelineMilestone } from '@ka2/shared';
 import { GlassCard } from '../../components/common/GlassCard';
 import {
@@ -139,7 +139,7 @@ export const StoryView: React.FC<StoryViewProps> = ({ onBack }) => {
 
               {item.mediaUrl && (
                 <div className="mt-3 rounded-xl overflow-hidden aspect-video">
-                  <img src={item.mediaUrl} alt={item.title} className="w-full h-full object-cover" />
+                  <img src={resolveMediaUrl(item.mediaUrl)} alt={item.title} className="w-full h-full object-cover" />
                 </div>
               )}
             </GlassCard>

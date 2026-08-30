@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCall } from '../../context/CallContext';
 import { useAuth } from '../../context/AuthContext';
+import { resolveMediaUrl } from '../../services/api';
 import {
   Phone,
   PhoneOff,
@@ -46,9 +47,10 @@ export const CallOverlay: React.FC = () => {
   const [controlsVisible, setControlsVisible] = useState(true);
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
   const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
   const autoHideTimeoutRef = useRef<any>(null);
 
-  // Attach streams to video elements
+  // Attach streams to video & audio elements
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
@@ -58,6 +60,10 @@ export const CallOverlay: React.FC = () => {
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
+    }
+    if (remoteAudioRef.current && remoteStream) {
+      remoteAudioRef.current.srcObject = remoteStream;
+      remoteAudioRef.current.play().catch(e => console.log('[Call] Audio autoplay catch:', e));
     }
   }, [remoteStream]);
 
@@ -93,10 +99,12 @@ export const CallOverlay: React.FC = () => {
   };
 
   const partnerDisplayName = callerInfo?.name || partner?.name || 'My Love';
-  const partnerAvatar = callerInfo?.avatar || partner?.avatarUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300';
+  const partnerAvatar = resolveMediaUrl(callerInfo?.avatar || partner?.avatarUrl, partnerDisplayName);
 
   return (
     <div className="fixed inset-0 z-50 bg-[#07070C] flex flex-col justify-between overflow-hidden select-none safe-top safe-bottom">
+      {/* Hidden audio element dedicated to crystal clear remote audio playback */}
+      <audio ref={remoteAudioRef} autoPlay playsInline />
       {/* ----------------------------------------------------------------- */}
       {/* INCOMING CALL SCREEN */}
       {/* ----------------------------------------------------------------- */}

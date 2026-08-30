@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useCall } from '../../context/CallContext';
-import { api } from '../../services/api';
+import { api, resolveMediaUrl } from '../../services/api';
 import { socketService } from '../../services/socket';
+import { notificationService } from '../../services/notifications';
 import { VoiceRecorder } from './VoiceRecorder';
 import { VoicePlayer } from './VoicePlayer';
 import { Message, MessageReaction, SOCKET_EVENTS } from '@ka2/shared';
@@ -87,6 +88,17 @@ export const ChatView: React.FC = () => {
         if (prev.some(m => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
+      if (msg.senderId !== user?.id) {
+        const preview =
+          msg.type === 'image'
+            ? 'Sent a photo 📷'
+            : msg.type === 'voice'
+            ? 'Sent a voice note 🎙️'
+            : msg.type === 'video'
+            ? 'Sent a video 🎥'
+            : (msg.content || 'New romantic message ❤️');
+        notificationService.notifyNewMessage(partner?.name || 'My Love', preview);
+      }
       scrollToBottom();
     };
 
@@ -289,7 +301,7 @@ export const ChatView: React.FC = () => {
         <div className="flex items-center space-x-3">
           <div className="relative">
             <img
-              src={partner?.avatarUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100'}
+              src={resolveMediaUrl(partner?.avatarUrl, partner?.name || 'Anu')}
               alt={partner?.name}
               className="w-10 h-10 rounded-full object-cover border border-[#FF4F81]"
             />
@@ -420,16 +432,16 @@ export const ChatView: React.FC = () => {
                     {/* Media Type Handling */}
                     {msg.type === 'image' && msg.mediaUrl && (
                       <img
-                        src={msg.mediaUrl}
+                        src={resolveMediaUrl(msg.mediaUrl)}
                         alt="attachment"
                         className="rounded-xl max-h-60 w-full object-cover mb-1.5 cursor-pointer hover:opacity-95"
-                        onClick={() => window.open(msg.mediaUrl, '_blank')}
+                        onClick={() => window.open(resolveMediaUrl(msg.mediaUrl), '_blank')}
                       />
                     )}
 
                     {msg.type === 'video' && msg.mediaUrl && (
                       <video
-                        src={msg.mediaUrl}
+                        src={resolveMediaUrl(msg.mediaUrl)}
                         controls
                         className="rounded-xl max-h-60 w-full object-cover mb-1.5"
                       />
@@ -437,7 +449,7 @@ export const ChatView: React.FC = () => {
 
                     {msg.type === 'voice' && msg.mediaUrl && (
                       <VoicePlayer
-                        src={msg.mediaUrl}
+                        src={resolveMediaUrl(msg.mediaUrl)}
                         durationMs={msg.voiceMeta?.durationMs}
                         waveform={msg.voiceMeta?.waveform}
                         isOutgoing={isOutgoing}

@@ -6,19 +6,30 @@
   --primary-bg: #07070C;
   --secondary-bg: #101019;
   --surface: #171722;
+  --text-main: #FFFFFF;
+  --text-muted: #A7A7B7;
   --primary-accent: #FF4F81;
   --secondary-accent: #9B5CFF;
+}
+
+html.light, body.light, .light {
+  --primary-bg: #FFF5F8;
+  --secondary-bg: #FFE8F0;
+  --surface: #FFFFFF;
+  --text-main: #23121D;
+  --text-muted: #7E596B;
 }
 
 body {
   margin: 0;
   padding: 0;
   background-color: var(--primary-bg);
-  color: #FFFFFF;
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Glassmorphism Classes */
@@ -27,6 +38,12 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 79, 129, 0.15);
+  box-shadow: 0 10px 30px rgba(255, 79, 129, 0.06);
 }
 
 .glass-panel-light {
@@ -40,6 +57,12 @@ body {
   background: rgba(16, 16, 25, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+}
+
+.light .glass-input {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 79, 129, 0.2);
+  color: #23121D;
 }
 
 /* Safe Area Insets for iOS & Modern Androids */
@@ -64,6 +87,10 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 9999px;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(255, 79, 129, 0.25);
 }
 
 ::-webkit-scrollbar-thumb:hover {

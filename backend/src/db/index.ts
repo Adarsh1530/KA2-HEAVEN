@@ -185,6 +185,9 @@ class DatabaseService {
     const anuId = 'b2222222-2222-2222-2222-222222222222';
     const now = new Date().toISOString();
 
+    const getInitialAvatarSvg = (initial: string) =>
+      `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><defs><linearGradient id="ka2g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%239B5CFF"/><stop offset="100%" stop-color="%23FF4F81"/></linearGradient></defs><rect width="200" height="200" rx="100" fill="url(%23ka2g)"/><text x="50%" y="54%" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="82" fill="%23FFFFFF" text-anchor="middle" dominant-baseline="middle">${initial}</text></svg>`;
+
     this.memoryCache = {
       users: [
         {
@@ -194,7 +197,7 @@ class DatabaseService {
           name: config.seed.adminName,
           nickname: 'Keerthi',
           role: 'admin',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
+          avatarUrl: getInitialAvatarSvg('K'),
           bio: 'Architect of our digital universe. Forever yours, Anu ❤️',
           pinHash: pinHash,
           presenceStatus: 'online',
@@ -209,7 +212,7 @@ class DatabaseService {
           name: config.seed.userName,
           nickname: 'Anu',
           role: 'user',
-          avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=400&fit=crop&crop=faces',
+          avatarUrl: getInitialAvatarSvg('A'),
           bio: 'My heart, my home, my Keerthi. In our private Heaven ✨',
           pinHash: pinHash,
           presenceStatus: 'online',

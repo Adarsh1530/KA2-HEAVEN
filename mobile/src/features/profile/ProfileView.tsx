@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { api } from '../../services/api';
+import { api, resolveMediaUrl } from '../../services/api';
+import { notificationService } from '../../services/notifications';
 import { GlassCard } from '../../components/common/GlassCard';
 import { Logo } from '../../components/brand/Logo';
 import { DeviceSession, BRAND } from '@ka2/shared';
@@ -50,6 +51,7 @@ export const ProfileView: React.FC = () => {
 
   const [isServerModalOpen, setIsServerModalOpen] = useState(false);
   const [socketState, setSocketState] = useState<SocketConnectionState>('disconnected');
+  const [notificationEnabled, setNotificationEnabled] = useState(notificationService.isPermissionGranted());
 
   const avatarFileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -148,7 +150,7 @@ export const ProfileView: React.FC = () => {
           title="Tap to change avatar from gallery"
         >
           <img
-            src={user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}
+            src={resolveMediaUrl(user?.avatarUrl, user?.name || 'Keerthi')}
             alt={user?.name}
             className="w-full h-full rounded-full object-cover border-2 border-[#9B5CFF] shadow-[0_0_20px_rgba(155,92,255,0.4)] group-hover:opacity-80 transition-opacity"
           />
@@ -377,30 +379,39 @@ export const ProfileView: React.FC = () => {
         </GlassCard>
       </div>
 
-      {/* 5. Active Device Sessions */}
+      {/* 5. Lockscreen & Push Notifications */}
       <div>
         <h3 className="text-xs font-semibold text-[#A7A7B7] uppercase tracking-wider mb-2 px-1">
-          Authorized Devices
+          Notifications & Alerts
         </h3>
 
-        <GlassCard className="p-3 border-white/10 space-y-2.5">
-          {sessions.map((sess) => (
-            <div key={sess.id} className="flex items-center justify-between py-1 border-b border-white/5 last:border-0">
-              <div className="flex items-center space-x-2.5">
-                <Smartphone className="w-4 h-4 text-[#B28CFF]" />
-                <div>
-                  <span className="text-xs font-semibold text-white">{sess.deviceName}</span>
-                  <p className="text-[9px] text-[#A7A7B7]">{sess.ipAddress} • {sess.deviceType}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => handleRevokeSession(sess.id)}
-                className="text-[10px] text-[#FF5570] hover:underline"
-              >
-                Revoke
-              </button>
+        <GlassCard className="p-3.5 border-white/10 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-[#FF4F81]/15 border border-[#FF4F81]/30 flex items-center justify-center text-[#FF4F81]">
+              <Zap className="w-4 h-4" />
             </div>
-          ))}
+            <div>
+              <h4 className="text-xs font-semibold text-white">Lockscreen & Call Alerts</h4>
+              <p className="text-[10px] text-[#A7A7B7]">Alert calls & messages even when app is closed</p>
+            </div>
+          </div>
+
+          <button
+            onClick={async () => {
+              const granted = await notificationService.requestPermission();
+              setNotificationEnabled(granted);
+              if (granted) {
+                notificationService.playMessageChime();
+              }
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+              notificationEnabled
+                ? 'bg-[#42D392]/20 border border-[#42D392]/40 text-[#42D392]'
+                : 'bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white shadow-glow-pink'
+            }`}
+          >
+            {notificationEnabled ? '✓ Enabled' : 'Enable'}
+          </button>
         </GlassCard>
       </div>
 

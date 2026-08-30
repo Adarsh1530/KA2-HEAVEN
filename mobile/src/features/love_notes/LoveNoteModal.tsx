@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LoveNoteItem } from '@ka2/shared';
+import { resolveMediaUrl } from '../../services/api';
 import { X, Heart, Mail, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -96,7 +97,7 @@ export const LoveNoteModal: React.FC<LoveNoteModalProps> = ({ note, onClose }) =
               {/* Optional Attached Photo */}
               {note.photoUrl && (
                 <div className="mb-4 rounded-2xl overflow-hidden shadow-md">
-                  <img src={note.photoUrl} alt="Love Note Moment" className="w-full h-44 object-cover" />
+                  <img src={resolveMediaUrl(note.photoUrl)} alt="Love Note Moment" className="w-full h-44 object-cover" />
                 </div>
               )}
 

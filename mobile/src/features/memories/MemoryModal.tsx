@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MemoryItem } from '@ka2/shared';
+import { resolveMediaUrl } from '../../services/api';
 import { X, Heart, MapPin, Calendar, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -54,7 +55,7 @@ export const MemoryModal: React.FC<MemoryModalProps> = ({
       <div className="flex-1 flex items-center justify-center my-4 overflow-hidden">
         {memory.mediaType === 'video' ? (
           <video
-            src={memory.mediaUrl}
+            src={resolveMediaUrl(memory.mediaUrl)}
             controls
             autoPlay
             className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-2xl"
@@ -63,7 +64,7 @@ export const MemoryModal: React.FC<MemoryModalProps> = ({
           <motion.img
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            src={memory.mediaUrl}
+            src={resolveMediaUrl(memory.mediaUrl)}
             alt={memory.title}
             className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-2xl"
           />

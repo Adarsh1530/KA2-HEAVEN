@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useCall } from '../../context/CallContext';
 import { ParticleConnectionScene } from '../../components/canvas/ParticleConnectionScene';
 import { GlassCard } from '../../components/common/GlassCard';
+import { resolveMediaUrl } from '../../services/api';
 import { NavTab } from '../../components/common/BottomNav';
 import {
   MessageCircle,
@@ -77,7 +78,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="flex flex-col items-center">
             <div className="relative">
               <img
-                src={user?.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'}
+                src={resolveMediaUrl(user?.avatarUrl, user?.name || 'Keerthi')}
                 alt={user?.name}
                 className="w-14 h-14 rounded-full object-cover border-2 border-[#9B5CFF] shadow-[0_0_15px_rgba(155,92,255,0.4)]"
               />
@@ -101,7 +102,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="flex flex-col items-center">
             <div className="relative">
               <img
-                src={partner?.avatarUrl || 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150'}
+                src={resolveMediaUrl(partner?.avatarUrl, partner?.name || 'Anu')}
                 alt={partner?.name}
                 className="w-14 h-14 rounded-full object-cover border-2 border-[#FF4F81] shadow-[0_0_15px_rgba(255,79,129,0.4)]"
               />

@@ -65,8 +65,12 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('dev'));
 
-// Static uploads serving
-app.use('/uploads', express.static(config.storage.uploadDir));
+// Static uploads serving with explicit cross-origin headers for mobile & web
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(config.storage.uploadDir));
 
 // Health check route
 app.get('/api/health', (req: Request, res: Response) => {

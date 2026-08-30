@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api } from '../../services/api';
+import { api, resolveMediaUrl } from '../../services/api';
 import { MemoryItem, MemoryCategory } from '@ka2/shared';
 import { GlassCard } from '../../components/common/GlassCard';
 import { MemoryModal } from './MemoryModal';
@@ -268,7 +268,7 @@ export const MemoriesView: React.FC = () => {
               {/* Media Thumbnail */}
               <div className="relative aspect-square overflow-hidden bg-black/40">
                 <img
-                  src={mem.thumbnailUrl || mem.mediaUrl}
+                  src={resolveMediaUrl(mem.thumbnailUrl || mem.mediaUrl)}
                   alt={mem.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
