@@ -54,6 +54,8 @@ export const testServerHealth = async (testUrl?: string): Promise<{ success: boo
   }
 };
 
+export const DEFAULT_PRODUCTION_SERVER = 'https://ka2-heaven.onrender.com';
+
 export const getApiBase = () => {
   if (typeof window !== 'undefined') {
     const custom = localStorage.getItem('ka2_custom_server_url');
@@ -67,9 +69,8 @@ export const getApiBase = () => {
     if (window.location.port === '5173') {
       return `http://${hostname}:5000/api`;
     }
-    return '/api';
   }
-  return 'http://localhost:5000/api';
+  return `${DEFAULT_PRODUCTION_SERVER}/api`;
 };
 
 // Default Pre-seeded Users with unified UUIDs

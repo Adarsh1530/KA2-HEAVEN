@@ -190,13 +190,28 @@ export const ServerConfigModal: React.FC<ServerConfigModalProps> = ({ isOpen, on
               <div className="relative">
                 <input
                   type="url"
-                  placeholder="https://ka2-heaven-api.onrender.com"
+                  placeholder="https://ka2-heaven.onrender.com"
                   value={serverUrl}
                   onChange={(e) => setServerUrl(e.target.value)}
                   className="w-full bg-[#101019] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white placeholder-white/25 focus:outline-none focus:border-[#FF4F81] font-mono text-[11px]"
                 />
               </div>
-              <p className="text-[9px] text-[#A7A7B7] mt-1">
+
+              {/* Quick Preset Buttons */}
+              <div className="flex items-center space-x-1.5 mt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setServerUrl('https://ka2-heaven.onrender.com');
+                    runTest('https://ka2-heaven.onrender.com');
+                  }}
+                  className="px-2 py-1 rounded-lg bg-[#9B5CFF]/15 border border-[#9B5CFF]/30 text-[10px] text-[#FF91B5] hover:bg-[#9B5CFF]/25 transition-colors"
+                >
+                  ⚡ Use Render Cloud
+                </button>
+              </div>
+
+              <p className="text-[9px] text-[#A7A7B7] mt-1.5">
                 Currently using: <span className="text-white/80 font-mono">{getSocketUrl()}</span>
               </p>
             </div>

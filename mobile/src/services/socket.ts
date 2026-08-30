@@ -17,9 +17,8 @@ export const getSocketUrl = (): string => {
     if (window.location.port === '5173') {
       return `http://${hostname}:5000`;
     }
-    return window.location.origin;
   }
-  return 'http://localhost:5000';
+  return 'https://ka2-heaven.onrender.com';
 };
 
 class SocketService {
