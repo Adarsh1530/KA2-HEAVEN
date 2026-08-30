@@ -34,7 +34,7 @@ router.post('/upload', authenticateJWT, upload.single('file'), (req: Authenticat
 // Upload Multiple Media Files
 router.post('/upload-multiple', authenticateJWT, upload.array('files', 20), (req: AuthenticatedRequest, res: Response): void => {
   try {
-    const files = req.files as Express.Multer.File[];
+    const files = (req.files as any[]) || [];
     if (!files || files.length === 0) {
       res.status(400).json({ error: 'No files uploaded.' });
       return;
