@@ -1,0 +1,82 @@
+name: Build KA² — HEAVEN Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Production Android Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java Development Kit (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Verify Flutter Installation
+        run: flutter doctor -v
+
+      - name: Install Flutter Dependencies
+        working-directory: ./flutter_app
+        run: flutter pub get
+
+      - name: Build Android Release APK
+        working-directory: ./flutter_app
+        run: flutter build apk --release
+
+      - name: Prepare APK Artifact
+        run: |
+          mkdir -p output_apk
+          cp flutter_app/build/app/outputs/flutter-apk/app-release.apk output_apk/KA2-HEAVEN-Release.apk
+
+      - name: Upload APK as GitHub Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KA2-HEAVEN-Release-APK
+          path: output_apk/KA2-HEAVEN-Release.apk
+          retention-days: 90
+
+      - name: Create or Update GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/heads/main')
+        with:
+          tag_name: v1.0.0-apk
+          name: KA² — HEAVEN Android Release v1.0.0
+          body: |
+            ## 🌸 KA² — HEAVEN Android APK Release
+            *A Heaven Made for Two — Private Couple Communication & Romantic World*
+
+            ### 📲 How to Install on Android:
+            1. Download **`KA2-HEAVEN-Release.apk`** below to your Android phone.
+            2. Tap the downloaded file and click **Install** (allow *Install unknown apps* if prompted).
+            3. Open the app and enjoy worldwide realtime chat, crystal clear voice calls, and video calls!
+
+            ### ✨ What's Included in this build:
+            - Worldwide Realtime Chat & Message Reactions
+            - High-Definition WebRTC Voice & Video Calling (Global STUN/TURN Relays)
+            - Background & Lockscreen Notifications
+            - Photo, Video, and Voice Note Sharing
+            - Dual Relationship Vault (AES-256-GCM Encrypted)
+            - Interactive 3D Particle Starfield & Atmosphere
+          files: output_apk/KA2-HEAVEN-Release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

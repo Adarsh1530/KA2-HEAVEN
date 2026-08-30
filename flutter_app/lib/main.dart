@@ -66,6 +66,7 @@ class _KA2WebViewScreenState extends State<KA2WebViewScreen> {
       Permission.microphone,
       Permission.storage,
       Permission.photos,
+      Permission.notification,
     ].request();
   }
 
