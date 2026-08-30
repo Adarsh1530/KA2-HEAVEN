@@ -29,84 +29,18 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Build Official Android Release APK
+      - name: Build Android Release APK
+        working-directory: ./flutter_app
         run: |
-          # 1. Create a pristine Flutter Android project runner
-          flutter create --org world.ka2 --project-name ka2_heaven --platforms android ci_app
-          cd ci_app
-
-          # 2. Add required plugins
-          flutter pub add webview_flutter webview_flutter_android permission_handler flutter_spinkit
-
-          # 3. Replace lib/main.dart with custom KA2 UI
-          cp ../flutter_app/lib/main.dart lib/main.dart
-
-          # 4. Write complete AndroidManifest.xml with WebRTC and Notification permissions
-          cat << 'EOF' > android/app/src/main/AndroidManifest.xml
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-              package="world.ka2.heaven">
-
-              <uses-permission android:name="android.permission.INTERNET"/>
-              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-              <uses-permission android:name="android.permission.CAMERA"/>
-              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-              <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-              <uses-permission android:name="android.permission.VIBRATE"/>
-              <uses-permission android:name="android.permission.WAKE_LOCK"/>
-              <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
-              <uses-feature android:name="android.hardware.camera" android:required="false" />
-              <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
-              <uses-feature android:name="android.hardware.microphone" android:required="false" />
-
-              <application
-                  android:label="KA² — HEAVEN"
-                  android:name="${applicationName}"
-                  android:icon="@mipmap/ic_launcher"
-                  android:hardwareAccelerated="true"
-                  android:usesCleartextTraffic="true">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:launchMode="singleTop"
-                      android:theme="@style/LaunchTheme"
-                      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                      android:hardwareAccelerated="true"
-                      android:windowSoftInputMode="adjustResize">
-                      <meta-data
-                        android:name="io.flutter.embedding.android.NormalTheme"
-                        android:resource="@style/NormalTheme"
-                        />
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-                  </activity>
-                  <meta-data
-                      android:name="flutterEmbedding"
-                      android:value="2" />
-              </application>
-          </manifest>
-          EOF
-
-          # 5. Build Android Release APK
+          flutter create . --platforms=android --org world.ka2
+          flutter pub get
           flutter build apk --release --no-tree-shake-icons
-          cd ..
-
-      - name: Prepare APK Download Package
-        run: |
-          mkdir -p output_apk
-          cp ci_app/build/app/outputs/flutter-apk/app-release.apk output_apk/KA2-HEAVEN-Release.apk
 
       - name: Upload APK as Downloadable Artifact
         uses: actions/upload-artifact@v4
         with:
           name: KA2-HEAVEN-Release-APK
-          path: output_apk/KA2-HEAVEN-Release.apk
+          path: flutter_app/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 90
 
       - name: Publish GitHub Release with APK
@@ -122,7 +56,7 @@ jobs:
             ### 📲 Installation:
             1. Download `KA2-HEAVEN-Release.apk` below.
             2. Tap and install on your Android device.
-          files: output_apk/KA2-HEAVEN-Release.apk
+          files: flutter_app/build/app/outputs/flutter-apk/app-release.apk
           draft: false
           prerelease: false
         env:
