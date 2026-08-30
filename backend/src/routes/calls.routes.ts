@@ -6,6 +6,7 @@ const router = Router();
 
 router.use(authenticateJWT);
 
+router.get('/ice-servers', CallsController.getIceServers);
 router.get('/history', CallsController.getCallHistory);
 router.post('/log', CallsController.logCall);
 

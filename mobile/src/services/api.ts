@@ -15,7 +15,52 @@ import {
   BatchCreateMemoriesInput,
 } from '@ka2/shared';
 
-const getApiBase = () => {
+export const getCustomServerUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('ka2_custom_server_url') || '';
+  }
+  return '';
+};
+
+export const setCustomServerUrl = (url: string) => {
+  if (typeof window !== 'undefined') {
+    const trimmed = url.trim().replace(/\/$/, '');
+    if (trimmed) {
+      localStorage.setItem('ka2_custom_server_url', trimmed);
+    } else {
+      localStorage.removeItem('ka2_custom_server_url');
+    }
+    window.dispatchEvent(new Event('ka2_server_url_changed'));
+  }
+};
+
+export const testServerHealth = async (testUrl?: string): Promise<{ success: boolean; latencyMs: number; message?: string }> => {
+  const custom = (testUrl !== undefined ? testUrl : getCustomServerUrl()).trim().replace(/\/$/, '');
+  const target = custom || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api$/, '') : '');
+  const urlToPing = target ? `${target}/api/health` : `${getApiBase()}/health`;
+  const startTime = Date.now();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(urlToPing, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      return { success: true, latencyMs: Date.now() - startTime, message: data.tagline || 'Connected to Heaven Cloud' };
+    }
+    return { success: false, latencyMs: Date.now() - startTime, message: `Server HTTP ${res.status}` };
+  } catch (err: any) {
+    return { success: false, latencyMs: Date.now() - startTime, message: err.name === 'AbortError' ? 'Timeout (8s)' : 'Server unreachable' };
+  }
+};
+
+export const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    const custom = localStorage.getItem('ka2_custom_server_url');
+    if (custom && custom.trim()) {
+      return `${custom.trim().replace(/\/$/, '')}/api`;
+    }
+  }
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname || 'localhost';

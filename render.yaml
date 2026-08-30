@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ka2-heaven-api
+    env: node
+    plan: free
+    buildCommand: npm --workspace=shared run build && npm --workspace=backend run build
+    startCommand: npm --workspace=backend run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: CLIENT_URL
+        value: https://ka2-heaven.vercel.app
+      - key: ADMIN_URL
+        value: https://ka2-heaven.vercel.app/admin
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: ADMIN_INITIAL_PIN
+        value: 2808
+      - key: STUN_SERVER_1
+        value: stun:stun.l.google.com:19302
+      - key: STUN_SERVER_2
+        value: stun:stun1.l.google.com:19302
+      - key: TURN_SERVER_URL
+        value: turn:openrelay.metered.ca:80
+      - key: TURN_USERNAME
+        value: openrelayproject
+      - key: TURN_CREDENTIAL
+        value: openrelayproject

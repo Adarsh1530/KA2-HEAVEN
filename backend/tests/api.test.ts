@@ -216,4 +216,16 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
       .set('Authorization', `Bearer ${anuToken}`);
     expect(nonAdminRes.status).toBe(403);
   });
+
+  // 13. WebRTC ICE Servers Configuration
+  it('GET /api/calls/ice-servers returns STUN and TURN server list', async () => {
+    const res = await request(app)
+      .get('/api/calls/ice-servers')
+      .set('Authorization', `Bearer ${keerthiToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.iceServers).toBeDefined();
+    expect(Array.isArray(res.body.iceServers)).toBe(true);
+    expect(res.body.iceServers.length).toBeGreaterThan(0);
+  });
 });

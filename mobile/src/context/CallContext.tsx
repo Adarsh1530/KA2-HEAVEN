@@ -36,11 +36,27 @@ interface CallContextType {
 
 const CallContext = createContext<CallContextType | undefined>(undefined);
 
-const ICE_SERVERS = {
+// Robust global default ICE servers with STUN + free open TURN relays for worldwide NAT traversal
+const DEFAULT_ICE_SERVERS: RTCConfiguration = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
-  ]
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+    { urls: 'stun:stun.cloudflare.com:3478' },
+    { urls: 'stun:global.stun.twilio.com:3478' },
+    {
+      urls: [
+        'turn:openrelay.metered.ca:80',
+        'turn:openrelay.metered.ca:443',
+        'turns:openrelay.metered.ca:443?transport=tcp'
+      ],
+      username: 'openrelayproject',
+      credential: 'openrelayproject',
+    },
+  ],
+  iceCandidatePoolSize: 10,
 };
 
 export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -64,6 +80,28 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const durationTimerRef = useRef<any>(null);
   const callStartTimeRef = useRef<number | null>(null);
+  const iceConfigRef = useRef<RTCConfiguration>(DEFAULT_ICE_SERVERS);
+
+  // Fetch dynamic ICE servers on start / user login
+  useEffect(() => {
+    const fetchIce = async () => {
+      try {
+        const data = await api.request('/calls/ice-servers');
+        if (data?.iceServers && Array.isArray(data.iceServers) && data.iceServers.length > 0) {
+          iceConfigRef.current = {
+            iceServers: data.iceServers,
+            iceCandidatePoolSize: 10,
+          };
+          console.log('[WebRTC] Loaded dynamic ICE servers from backend');
+        }
+      } catch (e) {
+        console.log('[WebRTC] Using global default STUN/TURN fallback servers');
+      }
+    };
+    if (user) {
+      fetchIce();
+    }
+  }, [user]);
 
   // Clean up streams & peer connection
   const cleanupCall = useCallback(() => {
@@ -93,9 +131,9 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCallDuration(0);
   }, [localStream]);
 
-  // Setup PeerConnection
+  // Setup PeerConnection with global STUN + TURN
   const createPeerConnection = useCallback((type: CallType, cId: string, targetId: string) => {
-    const pc = new RTCPeerConnection(ICE_SERVERS);
+    const pc = new RTCPeerConnection(iceConfigRef.current);
     peerConnectionRef.current = pc;
 
     pc.onicecandidate = (event) => {
@@ -110,16 +148,28 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     pc.oniceconnectionstatechange = () => {
-      if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+      console.log('[WebRTC] ICE state changed:', pc.iceConnectionState);
+      if (pc.iceConnectionState === 'disconnected') {
         setConnectionQuality('Reconnecting');
+      } else if (pc.iceConnectionState === 'failed') {
+        setConnectionQuality('Poor');
+        if (typeof (pc as any).restartIce === 'function') {
+          (pc as any).restartIce();
+        }
       } else if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
         setConnectionQuality('Excellent');
+      } else if (pc.iceConnectionState === 'checking') {
+        setConnectionQuality('Good');
       }
     };
 
     pc.ontrack = (event) => {
+      console.log('[WebRTC] Received remote track:', event.track.kind);
       if (event.streams && event.streams[0]) {
         setRemoteStream(event.streams[0]);
+      } else if (event.track) {
+        const inboundStream = new MediaStream([event.track]);
+        setRemoteStream(inboundStream);
       }
     };
 
@@ -152,13 +202,20 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Create WebRTC Offer
       const pc = peerConnectionRef.current;
       if (pc && partner) {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        socket.emit(SOCKET_EVENTS.CALL_SIGNAL_OFFER, {
-          callId: data.callId,
-          targetUserId: partner.id,
-          sdp: offer,
-        });
+        try {
+          const offer = await pc.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: callType === 'video',
+          });
+          await pc.setLocalDescription(offer);
+          socket.emit(SOCKET_EVENTS.CALL_SIGNAL_OFFER, {
+            callId: data.callId,
+            targetUserId: partner.id,
+            sdp: offer,
+          });
+        } catch (e) {
+          console.error('[WebRTC] Error creating offer:', e);
+        }
       }
     };
 
@@ -171,26 +228,34 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const handleSignalOffer = async (data: any) => {
-      if (!peerConnectionRef.current && partner) {
-        createPeerConnection(callType, data.callId, partner.id);
-      }
-      const pc = peerConnectionRef.current;
-      if (pc) {
-        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        socket.emit(SOCKET_EVENTS.CALL_SIGNAL_ANSWER, {
-          callId: data.callId,
-          targetUserId: data.senderId,
-          sdp: answer,
-        });
+      try {
+        if (!peerConnectionRef.current && partner) {
+          createPeerConnection(callType, data.callId, partner.id);
+        }
+        const pc = peerConnectionRef.current;
+        if (pc) {
+          await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          socket.emit(SOCKET_EVENTS.CALL_SIGNAL_ANSWER, {
+            callId: data.callId,
+            targetUserId: data.senderId,
+            sdp: answer,
+          });
+        }
+      } catch (err) {
+        console.error('[WebRTC] Error handling signal offer:', err);
       }
     };
 
     const handleSignalAnswer = async (data: any) => {
-      const pc = peerConnectionRef.current;
-      if (pc) {
-        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      try {
+        const pc = peerConnectionRef.current;
+        if (pc && pc.signalingState !== 'stable') {
+          await pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+        }
+      } catch (err) {
+        console.error('[WebRTC] Error handling signal answer:', err);
       }
     };
 
@@ -200,7 +265,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
         } catch (e) {
-          console.warn('Error adding ice candidate:', e);
+          console.warn('[WebRTC] Error adding ice candidate:', e);
         }
       }
     };
@@ -210,11 +275,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const handleRecordingConsent = (data: any) => {
-      if (data.agreed) {
-        setIsRecording(true);
-      } else {
-        setIsRecording(false);
-      }
+      setIsRecording(Boolean(data.agreed));
     };
 
     socket.on(SOCKET_EVENTS.CALL_INCOMING, handleIncomingCall);
@@ -240,48 +301,56 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [user, partner, callType, createPeerConnection, cleanupCall]);
 
-const createMediaStreamSafe = async (type: CallType): Promise<MediaStream> => {
-  try {
-    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      return await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: type === 'video',
-      });
-    }
-  } catch (e) {
-    console.warn('Hardware media stream unavailable, using safe virtual stream:', e);
-  }
-
-  try {
-    const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
-    if (AudioContextClass) {
-      const ctx = new AudioContextClass();
-      const osc = ctx.createOscillator();
-      const dst = ctx.createMediaStreamDestination();
-      osc.connect(dst);
-      osc.start();
-      const audioTrack = dst.stream.getAudioTracks()[0];
-
-      if (type === 'video') {
-        const canvas = document.createElement('canvas');
-        canvas.width = 640;
-        canvas.height = 480;
-        const cCtx = canvas.getContext('2d');
-        if (cCtx) {
-          cCtx.fillStyle = '#101019';
-          cCtx.fillRect(0, 0, 640, 480);
-        }
-        const videoStream = (canvas as any).captureStream ? (canvas as any).captureStream(15) : null;
-        const videoTrack = videoStream ? videoStream.getVideoTracks()[0] : null;
-        return new MediaStream(videoTrack ? [audioTrack, videoTrack] : [audioTrack]);
+  const createMediaStreamSafe = async (type: CallType): Promise<MediaStream> => {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.mediaDevices?.getUserMedia) {
+        return await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+          video: type === 'video' ? {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          } : false,
+        });
       }
-      return new MediaStream([audioTrack]);
+    } catch (e) {
+      console.warn('Hardware media stream unavailable, using safe virtual stream:', e);
     }
-  } catch {
-    // Silent catch
-  }
-  return new MediaStream();
-};
+
+    try {
+      const AudioContextClass = (window as any).AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextClass) {
+        const ctx = new AudioContextClass();
+        const osc = ctx.createOscillator();
+        const dst = ctx.createMediaStreamDestination();
+        osc.connect(dst);
+        osc.start();
+        const audioTrack = dst.stream.getAudioTracks()[0];
+
+        if (type === 'video') {
+          const canvas = document.createElement('canvas');
+          canvas.width = 640;
+          canvas.height = 480;
+          const cCtx = canvas.getContext('2d');
+          if (cCtx) {
+            cCtx.fillStyle = '#101019';
+            cCtx.fillRect(0, 0, 640, 480);
+          }
+          const videoStream = (canvas as any).captureStream ? (canvas as any).captureStream(15) : null;
+          const videoTrack = videoStream ? videoStream.getVideoTracks()[0] : null;
+          return new MediaStream(videoTrack ? [audioTrack, videoTrack] : [audioTrack]);
+        }
+        return new MediaStream([audioTrack]);
+      }
+    } catch {
+      // Silent fallback
+    }
+    return new MediaStream();
+  };
 
   const startCall = async (type: CallType) => {
     if (!partner || !user) return;
@@ -363,7 +432,6 @@ const createMediaStreamSafe = async (type: CallType): Promise<MediaStream> => {
         durationSeconds: duration,
       });
 
-      // Save call log to backend
       try {
         await api.request('/calls/log', {
           method: 'POST',

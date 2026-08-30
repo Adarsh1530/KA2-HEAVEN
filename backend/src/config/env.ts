@@ -44,9 +44,12 @@ export const config = {
     stunServers: [
       process.env.STUN_SERVER_1 || 'stun:stun.l.google.com:19302',
       process.env.STUN_SERVER_2 || 'stun:stun1.l.google.com:19302',
+      process.env.STUN_SERVER_3 || 'stun:stun2.l.google.com:19302',
+      process.env.STUN_SERVER_4 || 'stun:stun.cloudflare.com:3478',
+      process.env.STUN_SERVER_5 || 'stun:global.stun.twilio.com:3478',
     ],
-    turnServer: process.env.TURN_SERVER_URL || '',
-    turnUsername: process.env.TURN_USERNAME || '',
-    turnCredential: process.env.TURN_CREDENTIAL || '',
+    turnServer: process.env.TURN_SERVER_URL || 'turn:openrelay.metered.ca:80',
+    turnUsername: process.env.TURN_USERNAME || 'openrelayproject',
+    turnCredential: process.env.TURN_CREDENTIAL || 'openrelayproject',
   }
 };

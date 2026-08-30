@@ -1,9 +1,34 @@
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db';
+import { config } from '../config/env';
 import { AuthenticatedRequest } from '../middleware/auth';
 
 export class CallsController {
+  public static async getIceServers(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const iceServers: any[] = [
+        ...config.webrtc.stunServers.map(url => ({ urls: url })),
+      ];
+
+      if (config.webrtc.turnServer) {
+        iceServers.push({
+          urls: [
+            config.webrtc.turnServer,
+            'turn:openrelay.metered.ca:443',
+            'turns:openrelay.metered.ca:443?transport=tcp',
+          ],
+          username: config.webrtc.turnUsername || 'openrelayproject',
+          credential: config.webrtc.turnCredential || 'openrelayproject',
+        });
+      }
+
+      res.json({ iceServers });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to generate ICE servers config.' });
+    }
+  }
+
   public static async getCallHistory(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const data = db.getData();

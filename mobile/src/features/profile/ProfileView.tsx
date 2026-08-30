@@ -25,7 +25,11 @@ import {
   Fingerprint,
   Camera,
   Upload,
+  Globe,
+  Radio,
 } from 'lucide-react';
+import { ServerConfigModal } from '../../components/common/ServerConfigModal';
+import { socketService, SocketConnectionState, getSocketUrl } from '../../services/socket';
 
 export const ProfileView: React.FC = () => {
   const { user, partner, logout, updateProfile, lockApp } = useAuth();
@@ -44,7 +48,17 @@ export const ProfileView: React.FC = () => {
   const [newPin, setNewPin] = useState('');
   const [pinMessage, setPinMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const [isServerModalOpen, setIsServerModalOpen] = useState(false);
+  const [socketState, setSocketState] = useState<SocketConnectionState>('disconnected');
+
   const avatarFileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const unsub = socketService.onStatusChange((state) => {
+      setSocketState(state);
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -319,7 +333,51 @@ export const ProfileView: React.FC = () => {
         </GlassCard>
       </div>
 
-      {/* 4. Active Device Sessions */}
+      {/* 4. Cloud Server & Global Internet Sync */}
+      <div>
+        <h3 className="text-xs font-semibold text-[#A7A7B7] uppercase tracking-wider mb-2 px-1">
+          Cloud Server & Internet Sync
+        </h3>
+
+        <GlassCard className="p-3.5 border-white/10 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                socketState === 'connected' ? 'bg-[#42D392]/15 text-[#42D392]' : 'bg-[#FF5570]/15 text-[#FF5570]'
+              }`}>
+                <Globe className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-white flex items-center space-x-1.5">
+                  <span>Cloud Connection</span>
+                  <span className={`w-2 h-2 rounded-full ${
+                    socketState === 'connected' ? 'bg-[#42D392] animate-pulse' : 'bg-[#FF5570]'
+                  }`} />
+                </span>
+                <p className="text-[10px] text-[#A7A7B7]">
+                  {socketState === 'connected' ? 'Realtime Chat & Calls Active' : 'Offline / Local Fallback'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsServerModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white/90 hover:bg-white/10 transition-colors"
+            >
+              Configure
+            </button>
+          </div>
+
+          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-[#A7A7B7]">
+            <span>Active Server:</span>
+            <span className="font-mono text-white/70 max-w-[200px] truncate">
+              {getSocketUrl()}
+            </span>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* 5. Active Device Sessions */}
       <div>
         <h3 className="text-xs font-semibold text-[#A7A7B7] uppercase tracking-wider mb-2 px-1">
           Authorized Devices
@@ -530,6 +588,12 @@ export const ProfileView: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Cloud Server Configuration Modal */}
+      <ServerConfigModal
+        isOpen={isServerModalOpen}
+        onClose={() => setIsServerModalOpen(false)}
+      />
     </div>
   );
 };
