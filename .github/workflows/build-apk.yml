@@ -22,7 +22,6 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-          cache: 'gradle'
 
       - name: Set up Flutter SDK
         uses: subosito/flutter-action@v2
@@ -30,30 +29,26 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Verify Flutter Installation
-        run: flutter doctor -v
-
-      - name: Install Flutter Dependencies
+      - name: Build Flutter Android APK
         working-directory: ./flutter_app
-        run: flutter pub get
+        run: |
+          flutter create . --platforms=android --org world.ka2
+          flutter pub get
+          flutter build apk --release --no-tree-shake-icons
 
-      - name: Build Android Release APK
-        working-directory: ./flutter_app
-        run: flutter build apk --release
-
-      - name: Prepare APK Artifact
+      - name: Prepare APK Output File
         run: |
           mkdir -p output_apk
           cp flutter_app/build/app/outputs/flutter-apk/app-release.apk output_apk/KA2-HEAVEN-Release.apk
 
-      - name: Upload APK as GitHub Build Artifact
+      - name: Upload Downloadable APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: KA2-HEAVEN-Release-APK
           path: output_apk/KA2-HEAVEN-Release.apk
           retention-days: 90
 
-      - name: Create or Update GitHub Release with APK
+      - name: Create GitHub Release with APK
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/heads/main')
         with:
@@ -67,14 +62,6 @@ jobs:
             1. Download **`KA2-HEAVEN-Release.apk`** below to your Android phone.
             2. Tap the downloaded file and click **Install** (allow *Install unknown apps* if prompted).
             3. Open the app and enjoy worldwide realtime chat, crystal clear voice calls, and video calls!
-
-            ### ✨ What's Included in this build:
-            - Worldwide Realtime Chat & Message Reactions
-            - High-Definition WebRTC Voice & Video Calling (Global STUN/TURN Relays)
-            - Background & Lockscreen Notifications
-            - Photo, Video, and Voice Note Sharing
-            - Dual Relationship Vault (AES-256-GCM Encrypted)
-            - Interactive 3D Particle Starfield & Atmosphere
           files: output_apk/KA2-HEAVEN-Release.apk
           draft: false
           prerelease: false
