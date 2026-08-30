@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { upload } from '../middleware/upload';
@@ -58,7 +58,7 @@ router.post('/upload-multiple', authenticateJWT, upload.array('files', 20), (req
 });
 
 // Authenticated / Secure Media Stream
-router.get('/file/:filename', (req, res): void => {
+router.get('/file/:filename', (req: Request, res: Response): void => {
   const { filename } = req.params;
   const sanitized = path.basename(filename);
   const filePath = path.join(config.storage.uploadDir, sanitized);
