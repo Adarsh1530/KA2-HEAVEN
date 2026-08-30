@@ -166,7 +166,7 @@ class _KA2WebViewScreenState extends State<KA2WebViewScreen> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFFFF4F81).withValues(alpha: 0.4),
+                                color: const Color(0x66FF4F81),
                                 blurRadius: 24,
                                 spreadRadius: 4,
                               )
