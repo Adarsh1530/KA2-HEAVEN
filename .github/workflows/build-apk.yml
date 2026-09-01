@@ -50,11 +50,14 @@ jobs:
           # 6. Compile Release APK
           flutter build apk --release --no-tree-shake-icons
 
+          # 7. Rename to official release binary
+          cp "build/app/outputs/flutter-apk/app-release.apk" "build/app/outputs/flutter-apk/KA2 - HEAVEN.apk"
+
       - name: Upload APK as Downloadable Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KA2-HEAVEN-Release-APK
-          path: flutter_app/build/app/outputs/flutter-apk/app-release.apk
+          name: KA2 - HEAVEN
+          path: "flutter_app/build/app/outputs/flutter-apk/KA2 - HEAVEN.apk"
           retention-days: 90
 
       - name: Publish GitHub Release with APK
@@ -68,9 +71,10 @@ jobs:
             *A Heaven Made for Two — Worldwide Couple Communication & Romantic World*
 
             ### 📲 Installation:
-            1. Download `KA2-HEAVEN-Release.apk` below.
+            1. Download `KA2 - HEAVEN.apk` below.
             2. Tap and install on your Android device.
-          files: flutter_app/build/app/outputs/flutter-apk/app-release.apk
+          files: |
+            flutter_app/build/app/outputs/flutter-apk/KA2 - HEAVEN.apk
           draft: false
           prerelease: false
         env:

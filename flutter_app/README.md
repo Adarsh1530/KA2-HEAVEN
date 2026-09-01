@@ -38,9 +38,9 @@ flutter build apk --release
 ### Step 4: Locate Your APK File
 Once the build completes, your installable APK will be at:
 ```
-D:\KA2\flutter_app\build\app\outputs\flutter-apk\app-release.apk
+D:\KA2\flutter_app\build\app\outputs\flutter-apk\KA2 - HEAVEN.apk
 ```
-Transfer `app-release.apk` to your Android phone and install!
+Transfer `KA2 - HEAVEN.apk` to your Android phone and install!
 
 ---
 
