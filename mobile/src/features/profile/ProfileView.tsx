@@ -659,27 +659,35 @@ export const ProfileView: React.FC = () => {
                   {/* Quick Preset Nicknames */}
                   <div>
                     <span className="block text-[10px] text-white/50 uppercase tracking-wider mb-2">
-                      Romantic Ideas (Tap to select):
+                      {partner?.name?.toLowerCase().includes('keerthi') || user?.name?.toLowerCase().includes('anu')
+                        ? 'Boyfriend Nicknames (Tap to select):'
+                        : 'Girlfriend Nicknames (Tap to select):'}
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        'My Queen 👑',
-                        'My Love ❤️',
-                        'My World 🌍',
-                        'Sweetheart ✨',
-                        'Babu 💕',
-                        'Handsome 👑',
-                        'Princess 👸',
-                        'Kichu 🌸',
-                        'Cutiepie 🥰',
-                      ].map((preset) => (
+                    <div className="flex flex-wrap gap-2">
+                      {(
+                        partner?.name?.toLowerCase().includes('keerthi') || user?.name?.toLowerCase().includes('anu')
+                          ? [
+                              'My Love ❤️',
+                              'Bubu 🥰',
+                              'Handsome 😘',
+                              'Kuttan 💕',
+                              'My Person 🫶',
+                            ]
+                          : [
+                              'My Love ❤️',
+                              'Ponne 🥰',
+                              'Bubu 💕',
+                              'Princess 👑',
+                              'My Girl 🫶',
+                            ]
+                      ).map((preset) => (
                         <button
                           key={preset}
                           type="button"
                           onClick={() => setPartnerNicknameInput(preset)}
-                          className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                          className={`px-3 py-1.5 rounded-xl text-xs transition-all font-medium ${
                             partnerNicknameInput === preset
-                              ? 'bg-[#FF4F81] text-white font-semibold shadow-glow-pink'
+                              ? 'bg-[#FF4F81] text-white shadow-glow-pink scale-105'
                               : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >
