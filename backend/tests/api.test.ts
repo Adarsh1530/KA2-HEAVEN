@@ -190,4 +190,18 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
     expect(Array.isArray(res.body.iceServers)).toBe(true);
     expect(res.body.iceServers.length).toBeGreaterThan(0);
   });
+
+  afterAll(async () => {
+    try {
+      const data = db.getData();
+      data.messages = [];
+      data.reactions = [];
+      data.calls = [];
+      data.memories = [];
+      data.loveNotes = [];
+      data.timelineMilestones = [];
+      data.devices = [];
+      await db.persist();
+    } catch {}
+  });
 });
