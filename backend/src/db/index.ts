@@ -99,21 +99,6 @@ export interface DatabaseSchema {
     openedAt?: string;
     createdAt: string;
   }>;
-  vaultItems: Array<{
-    id: string;
-    ownerId: string;
-    vaultType: 'shared' | 'personal';
-    title: string;
-    itemType: 'note' | 'photo' | 'video' | 'document' | 'secret';
-    encryptedData: string;
-    iv: string;
-    authTag: string;
-    fileUrl?: string;
-    fileSize?: number;
-    mimeType?: string;
-    createdAt: string;
-    updatedAt: string;
-  }>;
   timelineMilestones: Array<{
     id: string;
     title: string;
@@ -227,7 +212,6 @@ class DatabaseService {
       calls: [],
       memories: [],
       loveNotes: [],
-      vaultItems: [],
       timelineMilestones: [],
       appSettings: { ...INITIAL_APP_SETTINGS },
       auditLogs: [

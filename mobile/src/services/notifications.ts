@@ -6,6 +6,8 @@
 class NotificationService {
   private swRegistration: ServiceWorkerRegistration | null = null;
   private ringtoneInterval: any = null;
+  private activeRingtoneAudio: HTMLAudioElement | null = null;
+  private activeCtx: any = null;
 
   constructor() {
     this.initServiceWorker();
@@ -40,9 +42,52 @@ class NotificationService {
     return Notification.permission === 'granted';
   }
 
+  // --- Custom Audio Settings ---
+  public getCustomRingtone(): string | null {
+    if (typeof localStorage === 'undefined') return null;
+    return localStorage.getItem('ka2_custom_ringtone') || null;
+  }
+
+  public setCustomRingtone(dataUrl: string): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ka2_custom_ringtone', dataUrl);
+    }
+  }
+
+  public removeCustomRingtone(): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('ka2_custom_ringtone');
+    }
+  }
+
+  public getCustomNotificationSound(): string | null {
+    if (typeof localStorage === 'undefined') return null;
+    return localStorage.getItem('ka2_custom_notification_sound') || null;
+  }
+
+  public setCustomNotificationSound(dataUrl: string): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('ka2_custom_notification_sound', dataUrl);
+    }
+  }
+
+  public removeCustomNotificationSound(): void {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('ka2_custom_notification_sound');
+    }
+  }
+
   // Play Romantic Audio Chime (Message tone)
   public playMessageChime() {
     try {
+      const customSound = this.getCustomNotificationSound();
+      if (customSound) {
+        const audio = new Audio(customSound);
+        audio.volume = 1.0;
+        audio.play().catch(() => {});
+        return;
+      }
+
       const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
@@ -74,14 +119,30 @@ class NotificationService {
     } catch {}
   }
 
-  // Play Continuous Romantic Call Ringtone
+  // Play Continuous Call Ringtone
   public startCallRingtone() {
     this.stopCallRingtone();
+
+    const customRingtone = this.getCustomRingtone();
+    if (customRingtone) {
+      try {
+        const audio = new Audio(customRingtone);
+        audio.loop = true;
+        audio.volume = 1.0;
+        this.activeRingtoneAudio = audio;
+        audio.play().catch(e => console.log('[Ringtone] Custom audio play error:', e));
+        return;
+      } catch (err) {
+        console.warn('[Ringtone] Failed to play custom audio, using fallback:', err);
+      }
+    }
+
     const playTone = () => {
       try {
         const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
+        this.activeCtx = ctx;
         const now = ctx.currentTime;
 
         const osc = ctx.createOscillator();
@@ -107,10 +168,33 @@ class NotificationService {
     this.ringtoneInterval = setInterval(playTone, 2000);
   }
 
+  // Stop Ringtone IMMEDIATELY the instant call is answered, rejected, or ended
   public stopCallRingtone() {
+    if (this.activeRingtoneAudio) {
+      try {
+        this.activeRingtoneAudio.pause();
+        this.activeRingtoneAudio.currentTime = 0;
+        this.activeRingtoneAudio.src = '';
+      } catch {}
+      this.activeRingtoneAudio = null;
+    }
+
     if (this.ringtoneInterval) {
       clearInterval(this.ringtoneInterval);
       this.ringtoneInterval = null;
+    }
+
+    if (this.activeCtx) {
+      try {
+        this.activeCtx.close().catch(() => {});
+      } catch {}
+      this.activeCtx = null;
+    }
+
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(0);
+      } catch {}
     }
   }
 

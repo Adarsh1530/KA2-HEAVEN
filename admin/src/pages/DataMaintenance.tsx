@@ -36,7 +36,7 @@ export const DataMaintenance: React.FC = () => {
 
   // Clear Data Modal State
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
-  const [clearTarget, setClearTarget] = useState<'all' | 'messages' | 'memories' | 'vault' | 'loveNotes'>('all');
+  const [clearTarget, setClearTarget] = useState<'all' | 'messages' | 'memories' | 'loveNotes'>('all');
   const [pinInput, setPinInput] = useState('');
   const [confirmationPhrase, setConfirmationPhrase] = useState('');
   const [isClearing, setIsClearing] = useState(false);
@@ -224,10 +224,6 @@ export const DataMaintenance: React.FC = () => {
           <p className="text-xl font-bold text-white mt-1">{telemetry?.totalMemoriesCount ?? 0}</p>
         </div>
         <div className="bg-[#101019] p-4 rounded-2xl border border-white/10">
-          <span className="text-[11px] text-[#A7A7B7]">Encrypted Vault Items</span>
-          <p className="text-xl font-bold text-white mt-1">{telemetry?.totalVaultItemsCount ?? 0}</p>
-        </div>
-        <div className="bg-[#101019] p-4 rounded-2xl border border-white/10">
           <span className="text-[11px] text-[#A7A7B7]">Disk Storage Used</span>
           <p className="text-xl font-bold text-white mt-1">
             {((telemetry?.totalStorageBytes ?? 0) / (1024 * 1024)).toFixed(2)} MB
@@ -380,10 +376,9 @@ export const DataMaintenance: React.FC = () => {
                     onChange={(e) => setClearTarget(e.target.value as any)}
                     className="w-full bg-[#07070C] border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#FF5570]"
                   >
-                    <option value="all">🔥 ALL Couple Data (Messages, Memories, Vault, Love Notes)</option>
+                    <option value="all">🔥 ALL Couple Data (Messages, Memories, Love Notes)</option>
                     <option value="messages">💬 Chat Messages & Reactions Only</option>
                     <option value="memories">📸 Photos & Videos (Memories) Only</option>
-                    <option value="vault">🔐 Encrypted Vault Secrets Only</option>
                     <option value="loveNotes">💌 Love Notes & Letters Only</option>
                   </select>
                 </div>

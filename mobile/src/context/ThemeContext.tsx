@@ -14,9 +14,6 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    return (localStorage.getItem('ka2_theme') as ThemeMode) || 'dark';
-  });
   const [reduceMotion, setReduceMotionState] = useState<boolean>(() => {
     return localStorage.getItem('ka2_reduce_motion') === 'true';
   });
@@ -25,20 +22,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    localStorage.setItem('ka2_theme', theme);
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-  }, [theme]);
+    root.classList.add('dark');
+    root.classList.remove('light');
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  const toggleTheme = () => {};
 
   const setReduceMotion = (val: boolean) => {
     setReduceMotionState(val);
@@ -52,7 +41,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <ThemeContext.Provider value={{
-      theme,
+      theme: 'dark',
       toggleTheme,
       reduceMotion,
       setReduceMotion,

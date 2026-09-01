@@ -111,7 +111,6 @@ export const INITIAL_APP_SETTINGS = {
   secondaryTagline: 'Where It’s Just Us. ❤️',
   primaryColor: '#FF4F81',
   secondaryColor: '#9B5CFF',
-  themeMode: 'dark' as const,
   particleIntensity: 1.0,
   reduceMotion: false,
   soundEffectsEnabled: true,

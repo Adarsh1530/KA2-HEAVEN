@@ -30,13 +30,18 @@ import {
   Radio,
   Heart,
   Edit3,
+  Music,
+  Bell,
+  Play,
+  Square,
+  Trash2,
 } from 'lucide-react';
 import { ServerConfigModal } from '../../components/common/ServerConfigModal';
 import { socketService, SocketConnectionState, getSocketUrl } from '../../services/socket';
 
 export const ProfileView: React.FC = () => {
   const { user, partner, logout, updateProfile, updatePartnerNickname, lockApp } = useAuth();
-  const { theme, toggleTheme, reduceMotion, setReduceMotion, soundEffects, setSoundEffects } = useTheme();
+  const { reduceMotion, setReduceMotion, soundEffects, setSoundEffects } = useTheme();
 
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || '');
@@ -59,7 +64,14 @@ export const ProfileView: React.FC = () => {
   const [socketState, setSocketState] = useState<SocketConnectionState>('disconnected');
   const [notificationEnabled, setNotificationEnabled] = useState(notificationService.isPermissionGranted());
 
+  const [hasCustomRingtone, setHasCustomRingtone] = useState(Boolean(notificationService.getCustomRingtone()));
+  const [hasCustomChime, setHasCustomChime] = useState(Boolean(notificationService.getCustomNotificationSound()));
+  const [playingPreview, setPlayingPreview] = useState<'ringtone' | 'chime' | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+
   const avatarFileInputRef = useRef<HTMLInputElement | null>(null);
+  const ringtoneFileInputRef = useRef<HTMLInputElement | null>(null);
+  const chimeFileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const unsub = socketService.onStatusChange((state) => {
@@ -139,6 +151,86 @@ export const ProfileView: React.FC = () => {
       }, 1500);
     } catch (err: any) {
       setPinMessage({ type: 'error', text: err.message || 'Failed to update PIN.' });
+    }
+  };
+
+  const handleSelectRingtoneFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      notificationService.setCustomRingtone(dataUrl);
+      setHasCustomRingtone(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSelectChimeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      notificationService.setCustomNotificationSound(dataUrl);
+      setHasCustomChime(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleTogglePreview = (type: 'ringtone' | 'chime') => {
+    if (playingPreview === type) {
+      if (previewAudioRef.current) {
+        previewAudioRef.current.pause();
+        previewAudioRef.current = null;
+      }
+      notificationService.stopCallRingtone();
+      setPlayingPreview(null);
+      return;
+    }
+
+    if (previewAudioRef.current) {
+      previewAudioRef.current.pause();
+      previewAudioRef.current = null;
+    }
+    notificationService.stopCallRingtone();
+
+    if (type === 'ringtone') {
+      const customRingtone = notificationService.getCustomRingtone();
+      if (customRingtone) {
+        const audio = new Audio(customRingtone);
+        audio.volume = 1.0;
+        audio.onended = () => setPlayingPreview(null);
+        previewAudioRef.current = audio;
+        audio.play().catch(() => {});
+      } else {
+        notificationService.startCallRingtone();
+        setTimeout(() => {
+          notificationService.stopCallRingtone();
+          setPlayingPreview(null);
+        }, 3000);
+      }
+      setPlayingPreview('ringtone');
+    } else {
+      notificationService.playMessageChime();
+      setPlayingPreview('chime');
+      setTimeout(() => setPlayingPreview(null), 1000);
+    }
+  };
+
+  const handleResetRingtone = () => {
+    notificationService.removeCustomRingtone();
+    setHasCustomRingtone(false);
+    if (playingPreview === 'ringtone') {
+      handleTogglePreview('ringtone');
+    }
+  };
+
+  const handleResetChime = () => {
+    notificationService.removeCustomNotificationSound();
+    setHasCustomChime(false);
+    if (playingPreview === 'chime') {
+      handleTogglePreview('chime');
     }
   };
 
@@ -267,32 +359,146 @@ export const ProfileView: React.FC = () => {
         </div>
       </GlassCard>
 
-      {/* 2. Theme & Motion Customization */}
+      {/* Hidden File Inputs for Audio Uploads */}
+      <input
+        type="file"
+        ref={ringtoneFileInputRef}
+        accept="audio/*"
+        onChange={handleSelectRingtoneFile}
+        className="hidden"
+      />
+      <input
+        type="file"
+        ref={chimeFileInputRef}
+        accept="audio/*"
+        onChange={handleSelectChimeFile}
+        className="hidden"
+      />
+
+      {/* 2. Ringtones & Audio Sounds Customization */}
       <div>
         <h3 className="text-xs font-semibold text-[#A7A7B7] uppercase tracking-wider mb-2 px-1">
-          Experience & Atmosphere
+          Ringtones & Audio Sounds
         </h3>
 
         <GlassCard className="p-3 border-white/10 space-y-3">
-          {/* Theme Toggle */}
+          {/* Custom Call Ringtone */}
           <div className="flex items-center justify-between py-1">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#FF91B5]">
-                {theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#9B5CFF]/20 to-[#FF4F81]/20 border border-[#FF4F81]/30 flex items-center justify-center text-[#FF91B5]">
+                <Music className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs font-semibold text-white">Theme Atmosphere</span>
+                <span className="text-xs font-semibold text-white">Call Ringtone</span>
                 <p className="text-[10px] text-[#A7A7B7]">
-                  {theme === 'dark' ? 'Dark Romantic Luxury' : 'Light Heaven'}
+                  {hasCustomRingtone ? 'Custom audio file active' : 'Default Romantic Melody'}
                 </p>
               </div>
             </div>
 
+            <div className="flex items-center space-x-1.5">
+              <button
+                type="button"
+                onClick={() => handleTogglePreview('ringtone')}
+                className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/80 hover:text-white"
+                title="Preview Ringtone"
+              >
+                {playingPreview === 'ringtone' ? (
+                  <Square className="w-3.5 h-3.5 text-[#FF4F81] fill-current" />
+                ) : (
+                  <Play className="w-3.5 h-3.5" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => ringtoneFileInputRef.current?.click()}
+                className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#9B5CFF]/25 to-[#FF4F81]/25 border border-[#FF4F81]/30 text-[11px] text-[#FF91B5] font-medium hover:border-[#FF4F81]"
+              >
+                {hasCustomRingtone ? 'Change' : 'Choose File'}
+              </button>
+              {hasCustomRingtone && (
+                <button
+                  type="button"
+                  onClick={handleResetRingtone}
+                  className="p-1.5 rounded-lg bg-[#FF5570]/10 border border-[#FF5570]/20 text-[#FF5570] hover:bg-[#FF5570]/20"
+                  title="Reset to default"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Custom Message Notification Chime */}
+          <div className="flex items-center justify-between py-1 border-t border-white/5">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#42D392]/20 to-[#9B5CFF]/20 border border-[#42D392]/30 flex items-center justify-center text-[#42D392]">
+                <Bell className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-white">Message Tone</span>
+                <p className="text-[10px] text-[#A7A7B7]">
+                  {hasCustomChime ? 'Custom audio file active' : 'Default Romantic Chime'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-1.5">
+              <button
+                type="button"
+                onClick={() => handleTogglePreview('chime')}
+                className="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/80 hover:text-white"
+                title="Preview Chime"
+              >
+                {playingPreview === 'chime' ? (
+                  <Square className="w-3.5 h-3.5 text-[#42D392] fill-current" />
+                ) : (
+                  <Play className="w-3.5 h-3.5" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => chimeFileInputRef.current?.click()}
+                className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#42D392]/25 to-[#9B5CFF]/25 border border-[#42D392]/30 text-[11px] text-[#42D392] font-medium hover:border-[#42D392]"
+              >
+                {hasCustomChime ? 'Change' : 'Choose File'}
+              </button>
+              {hasCustomChime && (
+                <button
+                  type="button"
+                  onClick={handleResetChime}
+                  className="p-1.5 rounded-lg bg-[#FF5570]/10 border border-[#FF5570]/20 text-[#FF5570] hover:bg-[#FF5570]/20"
+                  title="Reset to default"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Sound Effects Toggle */}
+          <div className="flex items-center justify-between py-1 border-t border-white/5">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#42D392]">
+                {soundEffects ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-white">Romantic Audio Cues</span>
+                <p className="text-[10px] text-[#A7A7B7]">Subtle tones for interactions</p>
+              </div>
+            </div>
+
             <button
-              onClick={toggleTheme}
-              className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white/90 hover:bg-white/10"
+              onClick={() => setSoundEffects(!soundEffects)}
+              className={`w-11 h-6 rounded-full transition-colors relative ${
+                soundEffects ? 'bg-[#42D392]' : 'bg-white/20'
+              }`}
             >
-              {theme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+              <span
+                className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                  soundEffects ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
             </button>
           </div>
 
@@ -317,32 +523,6 @@ export const ProfileView: React.FC = () => {
               <span
                 className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
                   reduceMotion ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-
-          {/* Sound Effects Toggle */}
-          <div className="flex items-center justify-between py-1 border-t border-white/5">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-[#42D392]">
-                {soundEffects ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-white">Romantic Audio Cues</span>
-                <p className="text-[10px] text-[#A7A7B7]">Subtle tones for calls & messages</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setSoundEffects(!soundEffects)}
-              className={`w-11 h-6 rounded-full transition-colors relative ${
-                soundEffects ? 'bg-[#42D392]' : 'bg-white/20'
-              }`}
-            >
-              <span
-                className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                  soundEffects ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
             </button>

@@ -393,6 +393,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const acceptCall = async () => {
+    notificationService.stopCallRingtone();
     if (!partner || !callId) return;
 
     try {

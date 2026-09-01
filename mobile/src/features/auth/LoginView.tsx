@@ -108,7 +108,7 @@ export const LoginView: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="name@ka2heaven.local"
+                placeholder="name@ka2heaven.com"
                 className="w-full bg-[#101019]/80 border border-white/10 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#FF4F81] focus:ring-1 focus:ring-[#FF4F81]"
               />
             </div>

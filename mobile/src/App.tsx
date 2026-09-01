@@ -10,7 +10,6 @@ import { PinLockModal } from './features/auth/PinLockModal';
 import { HomeView } from './features/home/HomeView';
 import { ChatView } from './features/chat/ChatView';
 import { MemoriesView } from './features/memories/MemoriesView';
-import { VaultView } from './features/vault/VaultView';
 import { ProfileView } from './features/profile/ProfileView';
 import { LoveNotesView } from './features/love_notes/LoveNotesView';
 import { StoryView } from './features/story/StoryView';
@@ -80,7 +79,6 @@ const AppContent: React.FC = () => {
             )}
             {activeTab === 'chat' && <ChatView />}
             {activeTab === 'memories' && <MemoriesView />}
-            {activeTab === 'vault' && <VaultView />}
             {activeTab === 'settings' && <ProfileView />}
           </>
         )}

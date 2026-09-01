@@ -21,11 +21,7 @@ export const MobileDevicePreview: React.FC<MobileDevicePreviewProps> = ({
 
       {/* Screen Container */}
       <div
-        className="w-full h-full rounded-[40px] overflow-hidden flex flex-col justify-between relative pt-8 pb-3 px-3.5 transition-colors duration-300"
-        style={{
-          backgroundColor: settings.themeMode === 'light' ? '#FAF7FA' : '#07070C',
-          color: settings.themeMode === 'light' ? '#151520' : '#FFFFFF',
-        }}
+        className="w-full h-full rounded-[40px] overflow-hidden flex flex-col justify-between relative pt-8 pb-3 px-3.5 bg-[#07070C] text-white"
       >
         {/* Mock Top Header */}
         <div className="flex items-center justify-between py-2 border-b border-white/10">
@@ -143,7 +139,7 @@ export const MobileDevicePreview: React.FC<MobileDevicePreviewProps> = ({
           <span style={{ color: settings.primaryColor, fontWeight: 'bold' }}>Home</span>
           <span>Chat</span>
           <span>Memories</span>
-          <span>Vault</span>
+          <span>Settings</span>
         </div>
       </div>
     </div>

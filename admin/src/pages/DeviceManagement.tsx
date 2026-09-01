@@ -60,30 +60,30 @@ export const DeviceManagement: React.FC = () => {
             <div className="p-8 text-center text-xs text-[#A7A7B7]">No active sessions found.</div>
           ) : (
             devices.map((dev) => (
-              <div key={dev.id} className="p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
-                <div className="flex items-center space-x-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF91B5]">
+              <div key={dev.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition-colors">
+                <div className="flex items-start sm:items-center space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF91B5] shrink-0">
                     <Smartphone className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-white flex items-center space-x-2">
+                    <h3 className="text-sm font-semibold text-white flex items-center space-x-2 flex-wrap gap-1">
                       <span>{dev.deviceName}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-[#FF91B5] font-normal">
                         {dev.userName}
                       </span>
                     </h3>
-                    <p className="text-xs text-[#A7A7B7] mt-0.5">
-                      IP: {dev.ipAddress} • Platform: {dev.deviceType} • Registered: {format(new Date(dev.createdAt), 'MMM dd, yyyy HH:mm')}
+                    <p className="text-xs text-[#A7A7B7] mt-0.5 break-all sm:break-normal">
+                      IP: {dev.ipAddress} • {dev.deviceType} • {format(new Date(dev.createdAt), 'MMM dd, yyyy HH:mm')}
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleRevoke(dev.id)}
-                  className="px-3 py-1.5 rounded-xl bg-[#FF5570]/15 hover:bg-[#FF5570]/25 text-[#FF5570] text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer"
+                  className="self-end sm:self-center px-3 py-1.5 rounded-xl bg-[#FF5570]/15 hover:bg-[#FF5570]/25 text-[#FF5570] text-xs font-semibold flex items-center space-x-1.5 transition-colors cursor-pointer shrink-0"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Revoke Session</span>
+                  <span>Revoke</span>
                 </button>
               </div>
             ))

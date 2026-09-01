@@ -41,7 +41,6 @@ export class AdminController {
         activeCallsCount: activeCalls,
         totalMessagesCount: data.messages.length,
         totalMemoriesCount: data.memories.length,
-        totalVaultItemsCount: data.vaultItems.length,
         totalStorageBytes,
         memoryUsageMB: Math.round(memoryUsage.heapUsed / (1024 * 1024)),
         cpuLoadPercent: Math.round(os.loadavg()[0] * 10),
@@ -172,11 +171,10 @@ export class AdminController {
         data.messages = [];
         data.reactions = [];
         data.memories = [];
-        data.vaultItems = [];
         data.loveNotes = [];
         data.calls = [];
         data.timelineMilestones = [];
-        clearedSummary = 'All messages, memories, vault items, love notes, calls, and milestones';
+        clearedSummary = 'All messages, memories, love notes, calls, and milestones';
       } else if (target === 'messages') {
         data.messages = [];
         data.reactions = [];
@@ -184,9 +182,6 @@ export class AdminController {
       } else if (target === 'memories') {
         data.memories = [];
         clearedSummary = 'All shared photo and video memories';
-      } else if (target === 'vault') {
-        data.vaultItems = [];
-        clearedSummary = 'All private and shared encrypted vault items';
       } else if (target === 'loveNotes') {
         data.loveNotes = [];
         clearedSummary = 'All romantic love letters and notes';
@@ -232,7 +227,6 @@ export class AdminController {
           messages: data.messages as any,
           memories: data.memories as any,
           loveNotes: data.loveNotes as any,
-          vaultItems: data.vaultItems as any,
           timelineMilestones: data.timelineMilestones as any,
           appSettings: data.appSettings as any,
           backupConfig,
@@ -265,7 +259,6 @@ export class AdminController {
       if (Array.isArray(imported.messages)) data.messages = imported.messages as any;
       if (Array.isArray(imported.memories)) data.memories = imported.memories as any;
       if (Array.isArray(imported.loveNotes)) data.loveNotes = imported.loveNotes as any;
-      if (Array.isArray(imported.vaultItems)) data.vaultItems = imported.vaultItems as any;
       if (Array.isArray(imported.timelineMilestones)) data.timelineMilestones = imported.timelineMilestones as any;
       if (imported.appSettings) data.appSettings = { ...data.appSettings, ...imported.appSettings };
 
@@ -287,7 +280,6 @@ export class AdminController {
         stats: {
           messagesCount: data.messages.length,
           memoriesCount: data.memories.length,
-          vaultItemsCount: data.vaultItems.length,
           loveNotesCount: data.loveNotes.length,
         },
       });
@@ -312,7 +304,6 @@ export class AdminController {
             sizeBytes: 42500,
             messagesCount: data.messages.length,
             memoriesCount: data.memories.length,
-            vaultItemsCount: data.vaultItems.length,
             loveNotesCount: data.loveNotes.length,
           },
         ],

@@ -79,7 +79,7 @@ class AdminApiService {
       return {
         user: {
           id: 'a1111111-1111-1111-1111-111111111111',
-          email: 'keerthi@ka2heaven.local',
+          email: 'keerthi@ka2heaven.com',
           name: 'Keerthi Adarsh',
           role: 'admin',
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
@@ -92,7 +92,7 @@ class AdminApiService {
       return {
         user: {
           id: 'a1111111-1111-1111-1111-111111111111',
-          email: 'keerthi@ka2heaven.local',
+          email: 'keerthi@ka2heaven.com',
           name: 'Keerthi Adarsh',
           role: 'admin',
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300',
@@ -103,7 +103,6 @@ class AdminApiService {
     if (endpoint.includes('/admin/telemetry')) {
       const msgs = JSON.parse(localStorage.getItem('ka2_messages') || '[]');
       const mems = JSON.parse(localStorage.getItem('ka2_memories') || '[]');
-      const vaults = JSON.parse(localStorage.getItem('ka2_vault_items') || '[]');
       return {
         telemetry: {
           uptimeSeconds: 86400,
@@ -112,8 +111,7 @@ class AdminApiService {
           activeCallsCount: 0,
           totalMessagesCount: msgs.length,
           totalMemoriesCount: mems.length,
-          totalVaultItemsCount: vaults.length,
-          totalStorageBytes: (JSON.stringify(mems).length + JSON.stringify(msgs).length + JSON.stringify(vaults).length),
+          totalStorageBytes: (JSON.stringify(mems).length + JSON.stringify(msgs).length),
           memoryUsageMB: 24,
           cpuLoadPercent: 2,
           databaseStatus: 'connected',
@@ -137,14 +135,11 @@ class AdminApiService {
       if (target === 'all' || !target) {
         localStorage.removeItem('ka2_messages');
         localStorage.removeItem('ka2_memories');
-        localStorage.removeItem('ka2_vault_items');
         localStorage.removeItem('ka2_love_notes');
       } else if (target === 'messages') {
         localStorage.removeItem('ka2_messages');
       } else if (target === 'memories') {
         localStorage.removeItem('ka2_memories');
-      } else if (target === 'vault') {
-        localStorage.removeItem('ka2_vault_items');
       } else if (target === 'loveNotes') {
         localStorage.removeItem('ka2_love_notes');
       }
@@ -160,7 +155,6 @@ class AdminApiService {
           messages: JSON.parse(localStorage.getItem('ka2_messages') || '[]'),
           memories: JSON.parse(localStorage.getItem('ka2_memories') || '[]'),
           loveNotes: JSON.parse(localStorage.getItem('ka2_love_notes') || '[]'),
-          vaultItems: JSON.parse(localStorage.getItem('ka2_vault_items') || '[]'),
           timelineMilestones: [],
           appSettings: JSON.parse(localStorage.getItem('ka2_settings') || JSON.stringify(INITIAL_APP_SETTINGS)),
           backupConfig: JSON.parse(localStorage.getItem('ka2_backup_config') || JSON.stringify(DEFAULT_BACKUP_CONFIG)),
@@ -174,7 +168,6 @@ class AdminApiService {
       if (imp) {
         if (imp.messages) localStorage.setItem('ka2_messages', JSON.stringify(imp.messages));
         if (imp.memories) localStorage.setItem('ka2_memories', JSON.stringify(imp.memories));
-        if (imp.vaultItems) localStorage.setItem('ka2_vault_items', JSON.stringify(imp.vaultItems));
         if (imp.loveNotes) localStorage.setItem('ka2_love_notes', JSON.stringify(imp.loveNotes));
         if (imp.appSettings) localStorage.setItem('ka2_settings', JSON.stringify(imp.appSettings));
       }
@@ -197,8 +190,8 @@ class AdminApiService {
         logs: [
           {
             id: 'log-1',
-            action: 'VAULT_PIN_VERIFIED',
-            userEmail: 'keerthi@ka2heaven.local',
+            action: 'PIN_VERIFIED',
+            userEmail: 'keerthi@ka2heaven.com',
             ipAddress: '127.0.0.1',
             userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Browser',
             createdAt: new Date().toISOString(),

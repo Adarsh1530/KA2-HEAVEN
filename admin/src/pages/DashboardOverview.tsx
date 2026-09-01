@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Radio,
   RefreshCw,
+  Phone,
 } from 'lucide-react';
 
 export const DashboardOverview: React.FC = () => {
@@ -169,14 +170,14 @@ export const DashboardOverview: React.FC = () => {
           <p className="text-[11px] text-[#FF91B5] mt-1">Photos, videos & notes</p>
         </div>
 
-        {/* Vault Secrets Encrypted */}
+        {/* WebRTC Calls */}
         <div className="glass-panel rounded-2xl p-4 border border-white/10">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-[#A7A7B7]">Vault Secrets</span>
-            <Lock className="w-4 h-4 text-[#B28CFF]" />
+            <span className="text-xs font-medium text-[#A7A7B7]">WebRTC Calls</span>
+            <Phone className="w-4 h-4 text-[#FFB156]" />
           </div>
-          <div className="text-2xl font-extrabold text-white">{telemetry.totalVaultItemsCount}</div>
-          <p className="text-[11px] text-[#42D392] mt-1">AES-256-GCM encrypted</p>
+          <div className="text-2xl font-extrabold text-white">{telemetry.activeCallsCount || 0}</div>
+          <p className="text-[11px] text-[#FFB156] mt-1">1-to-1 encrypted lines</p>
         </div>
       </div>
 

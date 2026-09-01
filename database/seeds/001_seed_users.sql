@@ -10,7 +10,7 @@ INSERT INTO users (id, email, password_hash, name, nickname, role, avatar_url, b
 VALUES 
 (
     'a1111111-1111-1111-1111-111111111111',
-    'keerthi@ka2heaven.local',
+    'keerthi@ka2heaven.com',
     '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     'Keerthi Adarsh',
     'Keerthi',
@@ -26,7 +26,7 @@ INSERT INTO users (id, email, password_hash, name, nickname, role, avatar_url, b
 VALUES 
 (
     'b2222222-2222-2222-2222-222222222222',
-    'anu@ka2heaven.local',
+    'anu@ka2heaven.com',
     '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
     'Anu Sri',
     'Anu',

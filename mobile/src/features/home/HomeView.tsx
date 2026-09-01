@@ -186,38 +186,25 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </GlassCard>
         </div>
 
-        {/* Second Row: Love Notes & Private Vault */}
-        <div className="grid grid-cols-2 gap-3 mt-3">
+        {/* Second Row: Love Notes */}
+        <div className="mt-3">
           {/* Love Notes */}
           <GlassCard
             interactive
             glowColor="rose"
             onClick={onOpenLoveNotes}
-            className="flex items-center space-x-3.5 cursor-pointer"
+            className="flex items-center justify-between cursor-pointer"
           >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#FF91B5]/25 to-[#FF4F81]/25 border border-[#FF91B5]/30 flex items-center justify-center text-[#FF91B5]">
-              <Mail className="w-5 h-5" />
+            <div className="flex items-center space-x-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#FF91B5]/25 to-[#FF4F81]/25 border border-[#FF91B5]/30 flex items-center justify-center text-[#FF91B5]">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Love Letters & Notes</h3>
+                <p className="text-[11px] text-[#A7A7B7]">Our romantic sealed whispers</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-sm font-semibold text-white">Love Notes</h3>
-              <p className="text-[11px] text-[#A7A7B7]">Heartfelt letters</p>
-            </div>
-          </GlassCard>
-
-          {/* Private Vault */}
-          <GlassCard
-            interactive
-            glowColor="violet"
-            onClick={() => onNavigate('vault')}
-            className="flex items-center space-x-3.5 cursor-pointer"
-          >
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#9B5CFF]/25 to-[#171722] border border-[#9B5CFF]/30 flex items-center justify-center text-[#B28CFF]">
-              <Lock className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-white">Private Vault</h3>
-              <p className="text-[11px] text-[#A7A7B7]">Secret space</p>
-            </div>
+            <span className="text-xs text-[#FF4F81] font-semibold">Open &rarr;</span>
           </GlassCard>
         </div>
 

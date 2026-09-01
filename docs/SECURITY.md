@@ -5,7 +5,7 @@
 Private Vault items and confidential love secrets are protected via client-side authenticated cryptography:
 
 ```
-[ User PIN (e.g. 2808) ] + [ Salt ]
+[ User PIN (e.g. 1530) ] + [ Salt ]
             │
             ▼ (PBKDF2 SHA-256 with 100,000 iterations)
    [ 256-bit AES-GCM Key ]

@@ -139,53 +139,15 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
     expect(res.body.memory.title).toBe('Our First Sunset Beach Walk');
   });
 
-  // 10. Private Vault: Personal vs Shared Isolation
-  it('POST /api/vault creates personal and shared items', async () => {
-    // Keerthi creates a Personal Vault item
-    const personalRes = await request(app)
-      .post('/api/vault')
+  // 10. Partner Nickname Update
+  it('PUT /api/auth/partner/nickname updates partner nickname', async () => {
+    const res = await request(app)
+      .put('/api/auth/partner/nickname')
       .set('Authorization', `Bearer ${keerthiToken}`)
-      .send({
-        title: 'Surprise Anniversary Plan',
-        vaultType: 'personal',
-        itemType: 'secret',
-        encryptedData: 'CiphertextPrivate123==',
-        iv: 'iv123',
-      });
-    expect(personalRes.status).toBe(201);
+      .send({ nickname: 'My Queen 👑' });
 
-    // Keerthi creates a Shared Vault item
-    const sharedRes = await request(app)
-      .post('/api/vault')
-      .set('Authorization', `Bearer ${keerthiToken}`)
-      .send({
-        title: 'Our Joint Savings & Passport Copies',
-        vaultType: 'shared',
-        itemType: 'document',
-        encryptedData: 'CiphertextShared456==',
-        iv: 'iv456',
-      });
-    expect(sharedRes.status).toBe(201);
-
-    // Anu checks personal vault (should NOT see Keerthi's personal surprise)
-    const anuPersonalRes = await request(app)
-      .get('/api/vault?vaultType=personal')
-      .set('Authorization', `Bearer ${anuToken}`);
-    expect(anuPersonalRes.status).toBe(200);
-    const hasKeerthiSecret = anuPersonalRes.body.items.some(
-      (item: any) => item.title === 'Surprise Anniversary Plan'
-    );
-    expect(hasKeerthiSecret).toBe(false);
-
-    // Anu checks shared vault (SHOULD see the joint item)
-    const anuSharedRes = await request(app)
-      .get('/api/vault?vaultType=shared')
-      .set('Authorization', `Bearer ${anuToken}`);
-    expect(anuSharedRes.status).toBe(200);
-    const hasShared = anuSharedRes.body.items.some(
-      (item: any) => item.title === 'Our Joint Savings & Passport Copies'
-    );
-    expect(hasShared).toBe(true);
+    expect(res.status).toBe(200);
+    expect(res.body.partner.nickname).toBe('My Queen 👑');
   });
 
   // 11. Love Notes: Send and Open

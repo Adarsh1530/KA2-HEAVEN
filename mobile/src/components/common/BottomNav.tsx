@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Home, MessageCircle, Heart, Lock, Settings, Sparkles } from 'lucide-react';
 import clsx from 'clsx';
 
-export type NavTab = 'home' | 'chat' | 'memories' | 'vault' | 'settings';
+export type NavTab = 'home' | 'chat' | 'memories' | 'settings';
 
 interface BottomNavProps {
   activeTab: NavTab;
@@ -20,7 +20,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     { id: 'home' as const, label: 'Home', icon: Home },
     { id: 'chat' as const, label: 'Chat', icon: MessageCircle, badge: unreadCount },
     { id: 'memories' as const, label: 'Memories', icon: Heart },
-    { id: 'vault' as const, label: 'Vault', icon: Lock },
     { id: 'settings' as const, label: 'Settings', icon: Settings },
   ];
 

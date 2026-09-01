@@ -132,7 +132,7 @@ export type MemoryCategory = 'all' | 'photos' | 'videos' | 'voice' | 'favorites'
 export interface MemoryItem {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   date: string;
   location?: string;
   category: 'photos' | 'videos' | 'voice' | 'moments';
@@ -144,6 +144,23 @@ export interface MemoryItem {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CreateMemoryInput {
+  title?: string;
+  description?: string;
+  date?: string;
+  location?: string;
+  category?: 'photos' | 'videos' | 'voice' | 'moments';
+  mediaUrl: string;
+  thumbnailUrl?: string;
+  mediaType?: 'image' | 'video' | 'audio';
+  notes?: string;
+  isFavorite?: boolean;
+}
+
+export interface BatchCreateMemoriesInput {
+  memories: CreateMemoryInput[];
 }
 
 export interface LoveNoteItem {
@@ -159,25 +176,6 @@ export interface LoveNoteItem {
   isOpened: boolean;
   openedAt?: string;
   createdAt: string;
-}
-
-export type VaultType = 'shared' | 'personal';
-export type VaultItemType = 'note' | 'photo' | 'video' | 'document' | 'secret';
-
-export interface VaultItem {
-  id: string;
-  ownerId: string;
-  vaultType: VaultType; // 'shared' (Our Vault) or 'personal' (My Private Vault)
-  title: string;
-  itemType: VaultItemType;
-  encryptedData: string; // AES-256-GCM ciphertext
-  iv: string;
-  authTag: string;
-  fileUrl?: string;
-  fileSize?: number;
-  mimeType?: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface TimelineMilestone {
@@ -201,7 +199,6 @@ export interface AppSettings {
   secondaryTagline: string;
   primaryColor: string;
   secondaryColor: string;
-  themeMode: 'dark' | 'light';
   particleIntensity: number;
   reduceMotion: boolean;
   soundEffectsEnabled: boolean;
@@ -235,9 +232,48 @@ export interface AdminTelemetry {
   activeCallsCount: number;
   totalMessagesCount: number;
   totalMemoriesCount: number;
-  totalVaultItemsCount: number;
   totalStorageBytes: number;
   memoryUsageMB: number;
   cpuLoadPercent: number;
   databaseStatus: 'connected' | 'degraded' | 'error';
 }
+
+export type AutoBackupSchedule = 'disabled' | 'hourly' | 'daily' | 'weekly' | 'monthly';
+
+export interface BackupSnapshotMetadata {
+  id: string;
+  name: string;
+  createdAt: string;
+  sizeBytes: number;
+  messagesCount: number;
+  memoriesCount: number;
+  loveNotesCount: number;
+}
+
+export interface BackupConfig {
+  autoBackupSchedule: AutoBackupSchedule;
+  lastBackupTimestamp?: string;
+  backupRetentionCount: number;
+  recentSnapshots: BackupSnapshotMetadata[];
+}
+
+export interface ClearDataPayload {
+  pin: string;
+  confirmationPhrase: string;
+  target: 'all' | 'messages' | 'memories' | 'loveNotes' | 'calls';
+}
+
+export interface FullBackupSnapshot {
+  version: string;
+  exportedAt: string;
+  checksum?: string;
+  data: {
+    messages: Message[];
+    memories: MemoryItem[];
+    loveNotes: LoveNoteItem[];
+    timelineMilestones: TimelineMilestone[];
+    appSettings: AppSettings;
+    backupConfig: BackupConfig;
+  };
+}
+

@@ -8,7 +8,6 @@ import {
   Message,
   MemoryItem,
   LoveNoteItem,
-  VaultItem,
   TimelineMilestone,
   AppSettings,
   INITIAL_APP_SETTINGS,
@@ -188,43 +187,17 @@ class ClientEngine {
     this.setStorage('love_notes', notes);
   }
 
-  public getVaultItems(vaultType: string, userId: string): VaultItem[] {
-    const all = this.getStorage<VaultItem[]>('vault_items', []);
-    if (vaultType === 'personal') {
-      return all.filter(item => item.vaultType === 'personal' && item.ownerId === userId);
-    }
-    return all.filter(item => item.vaultType === 'shared');
-  }
-
-  public addVaultItem(item: VaultItem) {
-    const all = this.getStorage<VaultItem[]>('vault_items', []);
-    this.setStorage('vault_items', [item, ...all]);
-  }
-
-  public addVaultItems(items: VaultItem[]) {
-    const all = this.getStorage<VaultItem[]>('vault_items', []);
-    this.setStorage('vault_items', [...items, ...all]);
-  }
-
-  public deleteVaultItem(itemId: string) {
-    const all = this.getStorage<VaultItem[]>('vault_items', []);
-    this.setStorage('vault_items', all.filter(i => i.id !== itemId));
-  }
-
   public clearAllData(target = 'all') {
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('ka2_data_cleared', 'true');
       if (target === 'all' || !target) {
         localStorage.setItem('ka2_messages', '[]');
         localStorage.setItem('ka2_memories', '[]');
-        localStorage.setItem('ka2_vault_items', '[]');
         localStorage.setItem('ka2_love_notes', '[]');
       } else if (target === 'messages') {
         localStorage.setItem('ka2_messages', '[]');
       } else if (target === 'memories') {
         localStorage.setItem('ka2_memories', '[]');
-      } else if (target === 'vault') {
-        localStorage.setItem('ka2_vault_items', '[]');
       } else if (target === 'loveNotes') {
         localStorage.setItem('ka2_love_notes', '[]');
       }
@@ -233,7 +206,6 @@ class ClientEngine {
       if (target === 'all' || !target) {
         sessionStorage.setItem('ka2_messages', '[]');
         sessionStorage.setItem('ka2_memories', '[]');
-        sessionStorage.setItem('ka2_vault_items', '[]');
         sessionStorage.setItem('ka2_love_notes', '[]');
       }
     }
@@ -639,68 +611,7 @@ class ApiService {
       }
     }
 
-    // 11. Vault: Batch
-    if (endpoint.includes('/vault/batch') && method === 'POST') {
-      const { items } = body;
-      const now = new Date().toISOString();
-      const created: VaultItem[] = (items || []).map((item: any, idx: number) => ({
-        id: `vault-${Date.now()}-${idx}`,
-        ownerId: this.currentUserId || KEERTHI_ID,
-        vaultType: item.vaultType || 'shared',
-        title: item.title || `Secret Photo — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
-        itemType: item.itemType || 'photo',
-        encryptedData: item.encryptedData,
-        iv: item.iv,
-        authTag: item.authTag || '',
-        fileUrl: item.fileUrl,
-        fileSize: item.fileSize,
-        mimeType: item.mimeType,
-        createdAt: now,
-        updatedAt: now,
-      }));
-      clientEngine.addVaultItems(created);
-      return { items: created, success: true } as any;
-    }
-
-    // 11. Vault: Single
-    if (endpoint.startsWith('/vault')) {
-      const urlParams = new URLSearchParams(endpoint.split('?')[1] || '');
-      const vaultType = urlParams.get('vaultType') || 'shared';
-
-      if (method === 'GET') {
-        const items = clientEngine.getVaultItems(
-          vaultType,
-          this.currentUserId || KEERTHI_ID
-        );
-        return { items } as any;
-      }
-      if (method === 'POST') {
-        const newItem: VaultItem = {
-          id: `vault-${Date.now()}`,
-          ownerId: this.currentUserId || KEERTHI_ID,
-          vaultType: body.vaultType || 'shared',
-          title: body.title || `Secret Item — ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
-          itemType: body.itemType || 'note',
-          encryptedData: body.encryptedData,
-          iv: body.iv,
-          authTag: body.authTag || '',
-          fileUrl: body.fileUrl,
-          fileSize: body.fileSize,
-          mimeType: body.mimeType,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        clientEngine.addVaultItem(newItem);
-        return { item: newItem } as any;
-      }
-      if (method === 'DELETE') {
-        const id = endpoint.split('/')[2];
-        clientEngine.deleteVaultItem(id);
-        return { success: true } as any;
-      }
-    }
-
-    // 12. Admin Telemetry & Settings
+    // 10. Admin Telemetry & Settings
     if (endpoint.includes('/admin/telemetry')) {
       return {
         uptimeSeconds: 86400,
@@ -709,7 +620,6 @@ class ApiService {
         activeCallsCount: 0,
         totalMessagesCount: clientEngine.getMessages().length,
         totalMemoriesCount: clientEngine.getMemories().length,
-        totalVaultItemsCount: 4,
         totalStorageBytes: 10485760,
         memoryUsageMB: 48,
         cpuLoadPercent: 5,

@@ -178,25 +178,6 @@ export interface LoveNoteItem {
   createdAt: string;
 }
 
-export type VaultType = 'shared' | 'personal';
-export type VaultItemType = 'note' | 'photo' | 'video' | 'document' | 'secret';
-
-export interface VaultItem {
-  id: string;
-  ownerId: string;
-  vaultType: VaultType; // 'shared' (Our Vault) or 'personal' (My Private Vault)
-  title: string;
-  itemType: VaultItemType;
-  encryptedData: string; // AES-256-GCM ciphertext
-  iv: string;
-  authTag: string;
-  fileUrl?: string;
-  fileSize?: number;
-  mimeType?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface TimelineMilestone {
   id: string;
   title: string;
@@ -218,7 +199,6 @@ export interface AppSettings {
   secondaryTagline: string;
   primaryColor: string;
   secondaryColor: string;
-  themeMode: 'dark' | 'light';
   particleIntensity: number;
   reduceMotion: boolean;
   soundEffectsEnabled: boolean;
@@ -252,7 +232,6 @@ export interface AdminTelemetry {
   activeCallsCount: number;
   totalMessagesCount: number;
   totalMemoriesCount: number;
-  totalVaultItemsCount: number;
   totalStorageBytes: number;
   memoryUsageMB: number;
   cpuLoadPercent: number;
@@ -268,7 +247,6 @@ export interface BackupSnapshotMetadata {
   sizeBytes: number;
   messagesCount: number;
   memoriesCount: number;
-  vaultItemsCount: number;
   loveNotesCount: number;
 }
 
@@ -282,7 +260,7 @@ export interface BackupConfig {
 export interface ClearDataPayload {
   pin: string;
   confirmationPhrase: string;
-  target: 'all' | 'messages' | 'memories' | 'vault' | 'loveNotes' | 'calls';
+  target: 'all' | 'messages' | 'memories' | 'loveNotes' | 'calls';
 }
 
 export interface FullBackupSnapshot {
@@ -293,7 +271,6 @@ export interface FullBackupSnapshot {
     messages: Message[];
     memories: MemoryItem[];
     loveNotes: LoveNoteItem[];
-    vaultItems: VaultItem[];
     timelineMilestones: TimelineMilestone[];
     appSettings: AppSettings;
     backupConfig: BackupConfig;
