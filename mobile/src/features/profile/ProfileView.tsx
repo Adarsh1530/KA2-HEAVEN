@@ -23,7 +23,6 @@ import {
   Check,
   X,
   ExternalLink,
-  Fingerprint,
   Camera,
   Upload,
   Globe,
@@ -545,7 +544,7 @@ export const ProfileView: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs font-semibold text-white">Instant App Lock</span>
-                <p className="text-[10px] text-[#A7A7B7]">Require PIN or Biometrics immediately</p>
+                <p className="text-[10px] text-[#A7A7B7]">Require PIN immediately</p>
               </div>
             </div>
 
@@ -565,7 +564,7 @@ export const ProfileView: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs font-semibold text-white">Change Security PIN</span>
-                <p className="text-[10px] text-[#A7A7B7]">For Vault and App Lock</p>
+                <p className="text-[10px] text-[#A7A7B7]">App Lock Security (Default: 1530)</p>
               </div>
             </div>
 

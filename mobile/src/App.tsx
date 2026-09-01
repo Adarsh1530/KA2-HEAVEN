@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--primary-bg)] text-[var(--text-main)] flex flex-col max-w-md mx-auto relative overflow-hidden shadow-2xl border-x border-white/5 transition-colors duration-300">
-      {/* App PIN / Biometric Lock Screen */}
+      {/* App Security PIN Lock Screen */}
       <PinLockModal isOpen={isLocked} />
 
       {/* Global WebRTC Voice/Video Call Overlay */}

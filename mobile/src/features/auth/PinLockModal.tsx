@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from '../../components/brand/Logo';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, Fingerprint, Delete } from 'lucide-react';
+import { Lock, Delete } from 'lucide-react';
 
 interface PinLockModalProps {
   isOpen: boolean;
@@ -51,16 +51,6 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
     setPin(prev => prev.slice(0, -1));
   };
 
-  const handleBiometricSim = async () => {
-    // Biometric instant unlock
-    const valid = await verifyPin('1530');
-    if (valid) {
-      unlockApp();
-      if (onSuccess) onSuccess();
-      setPin('');
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -106,15 +96,8 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
           </button>
         ))}
 
-        {/* Biometric Touch */}
-        <button
-          type="button"
-          onClick={handleBiometricSim}
-          className="w-16 h-16 mx-auto rounded-full glass-panel border border-white/10 flex items-center justify-center text-[#FF91B5] hover:bg-white/10 active:scale-90 transition-transform cursor-pointer"
-          title="FaceID / Fingerprint"
-        >
-          <Fingerprint className="w-6 h-6" />
-        </button>
+        {/* Empty placeholder for clean symmetrical layout */}
+        <div className="w-16 h-16 mx-auto" />
 
         {/* Zero */}
         <button
