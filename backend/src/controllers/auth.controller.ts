@@ -245,6 +245,46 @@ export class AuthController {
     }
   }
 
+  public static async updatePartnerNickname(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const { nickname } = req.body;
+      if (!nickname || !nickname.trim()) {
+        res.status(400).json({ error: 'Partner nickname cannot be empty.' });
+        return;
+      }
+
+      const data = db.getData();
+      const partner = data.users.find(u => u.id !== req.user?.id);
+
+      if (!partner) {
+        res.status(404).json({ error: 'Partner profile not found.' });
+        return;
+      }
+
+      partner.nickname = nickname.trim();
+      partner.updatedAt = new Date().toISOString();
+
+      await db.persist();
+
+      const safePartner = {
+        id: partner.id,
+        name: partner.name,
+        nickname: partner.nickname,
+        avatarUrl: partner.avatarUrl,
+        bio: partner.bio,
+        presenceStatus: partner.presenceStatus,
+        lastActive: partner.lastActive,
+      };
+
+      res.json({
+        partner: safePartner,
+        message: 'Partner nickname updated successfully.'
+      });
+    } catch (err) {
+      res.status(500).json({ error: 'Error updating partner nickname.' });
+    }
+  }
+
   public static async getSessions(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const data = db.getData();

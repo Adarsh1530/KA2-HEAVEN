@@ -48,7 +48,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </h1>
           <p className="text-xs text-[#A7A7B7] flex items-center space-x-1.5 mt-0.5">
             <span className={`w-2 h-2 rounded-full ${bothOnline ? 'bg-[#42D392] shadow-[0_0_8px_#42D392]' : 'bg-[#FF91B5]'}`} />
-            <span>{bothOnline ? 'Both in our Heaven right now ✨' : isPartnerOnline ? `${partner?.name} is active` : 'A Heaven Made for Two.'}</span>
+            <span>{bothOnline ? 'Both in our Heaven right now ✨' : isPartnerOnline ? `${partner?.nickname || partner?.name} is active` : 'A Heaven Made for Two.'}</span>
           </p>
         </div>
       </motion.div>

@@ -391,7 +391,7 @@ export const DataMaintenance: React.FC = () => {
                 {/* PIN Verification */}
                 <div>
                   <label className="block text-[11px] text-[#A7A7B7] mb-1 font-semibold">
-                    Enter Admin Security PIN (Default: 2808)
+                    Enter Admin Security PIN (Default: 1530)
                   </label>
                   <input
                     type="password"

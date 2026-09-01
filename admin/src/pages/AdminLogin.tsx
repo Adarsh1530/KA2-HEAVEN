@@ -7,8 +7,8 @@ interface AdminLoginProps {
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
-  const [email, setEmail] = useState('keerthi@ka2heaven.local');
-  const [password, setPassword] = useState('Keerthi@Heaven2026!');
+  const [email, setEmail] = useState('iloveyouanu@gmail.com');
+  const [password, setPassword] = useState('30052003');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

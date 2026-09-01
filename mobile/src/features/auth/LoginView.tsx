@@ -7,18 +7,18 @@ import { Lock, Mail, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
 
 export const LoginView: React.FC = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('keerthi@ka2heaven.local');
-  const [password, setPassword] = useState('Keerthi@Heaven2026!');
+  const [email, setEmail] = useState('iloveyouanu@gmail.com');
+  const [password, setPassword] = useState('30052003');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleQuickSwitch = (target: 'keerthi' | 'anu') => {
     if (target === 'keerthi') {
-      setEmail('keerthi@ka2heaven.local');
-      setPassword('Keerthi@Heaven2026!');
+      setEmail('iloveyouanu@gmail.com');
+      setPassword('30052003');
     } else {
-      setEmail('anu@ka2heaven.local');
-      setPassword('AnuSri@Heaven2026!');
+      setEmail('iloveyoukeerthi@gmail.com');
+      setPassword('15022003');
     }
   };
 

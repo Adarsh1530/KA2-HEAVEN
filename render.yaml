@@ -20,7 +20,7 @@ services:
       - key: JWT_REFRESH_SECRET
         generateValue: true
       - key: ADMIN_INITIAL_PIN
-        value: 2808
+        value: 1530
       - key: STUN_SERVER_1
         value: stun:stun.l.google.com:19302
       - key: STUN_SERVER_2

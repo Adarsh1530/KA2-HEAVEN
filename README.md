@@ -55,8 +55,8 @@ npm run dev
 
 | User | Email | Password | Default PIN | Role |
 |---|---|---|---|---|
-| **Keerthi Adarsh** | `keerthi@ka2heaven.local` | `Keerthi@Heaven2026!` | `2808` | Administrator |
-| **Anu Sri** | `anu@ka2heaven.local` | `AnuSri@Heaven2026!` | `2808` | Partner |
+| **Keerthi Adarsh** | `iloveyouanu@gmail.com` | `30052003` | `1530` | Administrator |
+| **Anu Sri** | `iloveyoukeerthi@gmail.com` | `15022003` | `1530` | Partner |
 
 ---
 

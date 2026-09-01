@@ -28,12 +28,14 @@ import {
   Upload,
   Globe,
   Radio,
+  Heart,
+  Edit3,
 } from 'lucide-react';
 import { ServerConfigModal } from '../../components/common/ServerConfigModal';
 import { socketService, SocketConnectionState, getSocketUrl } from '../../services/socket';
 
 export const ProfileView: React.FC = () => {
-  const { user, partner, logout, updateProfile, lockApp } = useAuth();
+  const { user, partner, logout, updateProfile, updatePartnerNickname, lockApp } = useAuth();
   const { theme, toggleTheme, reduceMotion, setReduceMotion, soundEffects, setSoundEffects } = useTheme();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -42,6 +44,10 @@ export const ProfileView: React.FC = () => {
   const [bio, setBio] = useState(user?.bio || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || '');
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  const [isEditingPartner, setIsEditingPartner] = useState(false);
+  const [partnerNicknameInput, setPartnerNicknameInput] = useState(partner?.nickname || '');
+  const [partnerSuccessMsg, setPartnerSuccessMsg] = useState(false);
 
   const [sessions, setSessions] = useState<DeviceSession[]>([]);
   const [isChangingPin, setIsChangingPin] = useState(false);
@@ -99,6 +105,21 @@ export const ProfileView: React.FC = () => {
       setIsEditing(false);
     } catch (err) {
       console.error('Failed to update profile:', err);
+    }
+  };
+
+  const handleSavePartnerNickname = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!partnerNicknameInput.trim()) return;
+    try {
+      await updatePartnerNickname(partnerNicknameInput.trim());
+      setPartnerSuccessMsg(true);
+      setTimeout(() => {
+        setPartnerSuccessMsg(false);
+        setIsEditingPartner(false);
+      }, 1000);
+    } catch (err) {
+      console.error('Failed to update partner nickname:', err);
     }
   };
 
@@ -199,6 +220,49 @@ export const ProfileView: React.FC = () => {
           >
             <Upload className="w-3.5 h-3.5 text-[#FF91B5]" />
             <span>Change Photo</span>
+          </button>
+        </div>
+      </GlassCard>
+
+      {/* 1b. Partner's Sacred Profile & Nickname Card */}
+      <GlassCard className="p-4 border-white/10 relative overflow-hidden bg-gradient-to-br from-[#FF4F81]/15 via-[#9B5CFF]/5 to-transparent">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3.5">
+            <div className="relative">
+              <img
+                src={resolveMediaUrl(partner?.avatarUrl, partner?.name || 'Partner')}
+                alt={partner?.name}
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#FF4F81] shadow-glow-pink"
+              />
+              <span
+                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#07070C] ${
+                  partner?.presenceStatus === 'online' ? 'bg-[#42D392]' : 'bg-white/40'
+                }`}
+              />
+            </div>
+            <div>
+              <div className="flex items-center space-x-1.5">
+                <span className="text-xs font-bold text-white">{partner?.name || 'Partner'}</span>
+                <Heart className="w-3 h-3 text-[#FF4F81] fill-[#FF4F81]" />
+              </div>
+              <p className="text-sm font-semibold text-[#FF91B5] tracking-wide mt-0.5">
+                {partner?.nickname || 'Love'}
+              </p>
+              <p className="text-[10px] text-white/50 italic max-w-[170px] truncate">
+                {partner?.bio || 'My heart, my home...'}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setPartnerNicknameInput(partner?.nickname || '');
+              setIsEditingPartner(true);
+            }}
+            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#FF4F81]/25 to-[#9B5CFF]/25 border border-[#FF4F81]/40 hover:border-[#FF4F81] text-xs text-white font-semibold flex items-center space-x-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-[#FF91B5]" />
+            <span>Edit Nickname</span>
           </button>
         </div>
       </GlassCard>
@@ -539,6 +603,108 @@ export const ProfileView: React.FC = () => {
         )}
       </AnimatePresence>
 
+      {/* Edit Partner's Nickname Modal */}
+      <AnimatePresence>
+        {isEditingPartner && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-panel rounded-3xl p-6 w-full max-w-sm border border-[#FF4F81]/30 shadow-2xl relative"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#FF4F81]/20 flex items-center justify-center text-[#FF4F81]">
+                    <Heart className="w-4 h-4 fill-current" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-white">Partner's Nickname</h3>
+                    <p className="text-[10px] text-[#A7A7B7]">Set what you call {partner?.name || 'your love'}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsEditingPartner(false)}
+                  className="p-1.5 rounded-full hover:bg-white/10 text-white/60 hover:text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {partnerSuccessMsg ? (
+                <div className="py-6 text-center space-y-2">
+                  <div className="w-12 h-12 rounded-full bg-[#42D392]/20 border border-[#42D392]/40 text-[#42D392] mx-auto flex items-center justify-center animate-bounce">
+                    <Check className="w-6 h-6" />
+                  </div>
+                  <p className="text-sm font-bold text-white">Nickname Updated! ❤️</p>
+                  <p className="text-xs text-[#A7A7B7]">Saved as "{partnerNicknameInput}" across our Heaven.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSavePartnerNickname} className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] text-[#A7A7B7] mb-1.5 font-medium">
+                      Romantic Nickname for {partner?.name || 'Partner'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. My Queen, Anu, Babu, Sweetheart"
+                      value={partnerNicknameInput}
+                      onChange={(e) => setPartnerNicknameInput(e.target.value)}
+                      className="w-full bg-[#101019] border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#FF4F81] transition-colors"
+                      autoFocus
+                    />
+                  </div>
+
+                  {/* Quick Preset Nicknames */}
+                  <div>
+                    <span className="block text-[10px] text-white/50 uppercase tracking-wider mb-2">
+                      Romantic Ideas (Tap to select):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        'My Queen 👑',
+                        'My Love ❤️',
+                        'My World 🌍',
+                        'Sweetheart ✨',
+                        'Babu 💕',
+                        'Handsome 👑',
+                        'Princess 👸',
+                        'Kichu 🌸',
+                        'Cutiepie 🥰',
+                      ].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setPartnerNicknameInput(preset)}
+                          className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                            partnerNicknameInput === preset
+                              ? 'bg-[#FF4F81] text-white font-semibold shadow-glow-pink'
+                              : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#9B5CFF] to-[#FF4F81] text-white font-semibold text-xs shadow-glow-pink hover:opacity-90 active:scale-95 transition-transform flex items-center justify-center space-x-1.5"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Save Partner's Nickname</span>
+                    </button>
+                  </div>
+                </form>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Change PIN Modal */}
       <AnimatePresence>
         {isChangingPin && (
@@ -566,7 +732,7 @@ export const ProfileView: React.FC = () => {
 
               <form onSubmit={handleChangePinSubmit} className="space-y-3.5">
                 <div>
-                  <label className="block text-[11px] text-[#A7A7B7] mb-1">Current PIN (Default: 2808)</label>
+                  <label className="block text-[11px] text-[#A7A7B7] mb-1">Current PIN (Default: 1530)</label>
                   <input
                     type="password"
                     maxLength={4}

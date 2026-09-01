@@ -26,6 +26,7 @@ interface AuthContextType {
   lockApp: () => void;
   unlockApp: () => void;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  updatePartnerNickname: (nickname: string) => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
@@ -142,6 +143,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(res.user);
   };
 
+  const updatePartnerNickname = async (newNickname: string) => {
+    const res = await api.request('/auth/partner/nickname', {
+      method: 'PUT',
+      body: JSON.stringify({ nickname: newNickname }),
+    });
+    if (res.partner) {
+      setPartner(prev => prev ? { ...prev, nickname: res.partner.nickname } : res.partner);
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -156,6 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lockApp,
       unlockApp,
       updateProfile,
+      updatePartnerNickname,
       refreshProfile,
     }}>
       {children}

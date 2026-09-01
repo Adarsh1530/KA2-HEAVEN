@@ -108,7 +108,7 @@ const ANU_ID = 'b2222222-2222-2222-2222-222222222222';
 const INITIAL_USERS: UserProfile[] = [
   {
     id: KEERTHI_ID,
-    email: 'keerthi@ka2heaven.local',
+    email: 'iloveyouanu@gmail.com',
     name: 'Keerthi Adarsh',
     nickname: 'Keerthi',
     role: 'admin',
@@ -121,7 +121,7 @@ const INITIAL_USERS: UserProfile[] = [
   },
   {
     id: ANU_ID,
-    email: 'anu@ka2heaven.local',
+    email: 'iloveyoukeerthi@gmail.com',
     name: 'Anu Sri',
     nickname: 'Anu',
     role: 'user',
@@ -439,10 +439,22 @@ class ApiService {
       return { user } as any;
     }
 
+    // 3b. Auth: Partner Nickname Update
+    if (endpoint.includes('/auth/partner/nickname') && method === 'PUT') {
+      const { nickname } = body;
+      const users = clientEngine.getUsers();
+      const updated = users.map(u =>
+        u.id !== this.currentUserId ? { ...u, nickname, updatedAt: new Date().toISOString() } : u
+      );
+      clientEngine.saveUsers(updated);
+      const partner = updated.find(u => u.id !== this.currentUserId);
+      return { partner, message: 'Partner nickname updated successfully.' } as any;
+    }
+
     // 4. Auth: PIN Verify
     if (endpoint.includes('/auth/pin/verify')) {
       const { pin } = body;
-      return { verified: pin === '2808' || pin === localStorage.getItem('ka2_custom_pin') } as any;
+      return { verified: pin === '1530' || pin === localStorage.getItem('ka2_custom_pin') } as any;
     }
 
     // 5. Auth: PIN Change

@@ -156,7 +156,7 @@ export class AdminController {
       }
 
       // Verify Admin PIN
-      let isPinValid = pin === '2808' || pin === config.seed.defaultPin;
+      let isPinValid = pin === '1530' || pin === config.seed.defaultPin;
       if (user?.pinHash) {
         isPinValid = isPinValid || (await bcrypt.compare(pin, user.pinHash));
       }

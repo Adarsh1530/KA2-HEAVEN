@@ -53,7 +53,7 @@ export const PinLockModal: React.FC<PinLockModalProps> = ({
 
   const handleBiometricSim = async () => {
     // Biometric instant unlock
-    const valid = await verifyPin('2808');
+    const valid = await verifyPin('1530');
     if (valid) {
       unlockApp();
       if (onSuccess) onSuccess();

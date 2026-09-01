@@ -31,13 +31,13 @@ export const config = {
   },
 
   seed: {
-    adminEmail: process.env.ADMIN_EMAIL || 'keerthi@ka2heaven.local',
-    adminPassword: process.env.ADMIN_PASSWORD || 'Keerthi@Heaven2026!',
+    adminEmail: process.env.ADMIN_EMAIL || 'iloveyouanu@gmail.com',
+    adminPassword: process.env.ADMIN_PASSWORD || '30052003',
     adminName: 'Keerthi Adarsh',
-    userEmail: process.env.USER_EMAIL || 'anu@ka2heaven.local',
-    userPassword: process.env.USER_PASSWORD || 'AnuSri@Heaven2026!',
+    userEmail: process.env.USER_EMAIL || 'iloveyoukeerthi@gmail.com',
+    userPassword: process.env.USER_PASSWORD || '15022003',
     userName: 'Anu Sri',
-    defaultPin: process.env.ADMIN_INITIAL_PIN || '2808',
+    defaultPin: process.env.ADMIN_INITIAL_PIN || '1530',
   },
 
   webrtc: {

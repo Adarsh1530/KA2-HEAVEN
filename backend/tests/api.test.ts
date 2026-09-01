@@ -23,8 +23,8 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
   // 2. Authentication: Login as Keerthi (Admin)
   it('POST /api/auth/login logs in Keerthi successfully', async () => {
     const res = await request(app).post('/api/auth/login').send({
-      email: 'keerthi@ka2heaven.local',
-      password: 'Keerthi@Heaven2026!',
+      email: 'iloveyouanu@gmail.com',
+      password: '30052003',
       deviceName: 'Keerthi iPhone 16 Pro',
       deviceType: 'ios',
     });
@@ -42,8 +42,8 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
   // 3. Authentication: Login as Anu
   it('POST /api/auth/login logs in Anu successfully', async () => {
     const res = await request(app).post('/api/auth/login').send({
-      email: 'anu@ka2heaven.local',
-      password: 'AnuSri@Heaven2026!',
+      email: 'iloveyoukeerthi@gmail.com',
+      password: '15022003',
       deviceName: 'Anu iPhone 15',
       deviceType: 'ios',
     });
@@ -61,7 +61,7 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
   // 4. Authentication: Invalid Credentials Rejected
   it('POST /api/auth/login rejects invalid password', async () => {
     const res = await request(app).post('/api/auth/login').send({
-      email: 'keerthi@ka2heaven.local',
+      email: 'iloveyouanu@gmail.com',
       password: 'WrongPassword123!',
     });
 
@@ -85,7 +85,7 @@ describe('KA² — HEAVEN Comprehensive API Tests', () => {
     const res = await request(app)
       .post('/api/auth/pin/verify')
       .set('Authorization', `Bearer ${keerthiToken}`)
-      .send({ pin: '2808' });
+      .send({ pin: '1530' });
 
     expect(res.status).toBe(200);
     expect(res.body.verified).toBe(true);

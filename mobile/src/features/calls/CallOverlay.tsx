@@ -98,7 +98,7 @@ export const CallOverlay: React.FC = () => {
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const partnerDisplayName = callerInfo?.name || partner?.name || 'My Love';
+  const partnerDisplayName = callerInfo?.name || partner?.nickname || partner?.name || 'My Love';
   const partnerAvatar = resolveMediaUrl(callerInfo?.avatar || partner?.avatarUrl, partnerDisplayName);
 
   return (
