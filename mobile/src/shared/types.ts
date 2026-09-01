@@ -250,9 +250,9 @@ export interface AdminTelemetry {
     anu: boolean;
   };
   activeCallsCount: number;
+  totalCallsCount: number;
   totalMessagesCount: number;
   totalMemoriesCount: number;
-  totalVaultItemsCount: number;
   totalStorageBytes: number;
   memoryUsageMB: number;
   cpuLoadPercent: number;

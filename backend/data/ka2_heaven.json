@@ -11,7 +11,7 @@
       "bio": "Architect of our digital universe. Forever yours, Anu ❤️",
       "pinHash": "$2b$10$W.Epdt0utHkxnfaPHwvzkedqhCJ211xKrR3S2wvgFT0.O3osM6INi",
       "presenceStatus": "online",
-      "lastActive": "2026-09-01T11:07:25.068Z",
+      "lastActive": "2026-09-01T11:27:22.121Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
       "updatedAt": "2026-08-28T13:21:15.605Z"
     },
@@ -26,9 +26,9 @@
       "bio": "My heart, my home, my Keerthi. In our private Heaven ✨",
       "pinHash": "$2b$10$W.Epdt0utHkxnfaPHwvzkedqhCJ211xKrR3S2wvgFT0.O3osM6INi",
       "presenceStatus": "online",
-      "lastActive": "2026-09-01T11:07:25.160Z",
+      "lastActive": "2026-09-01T11:27:22.215Z",
       "createdAt": "2026-08-28T13:21:15.605Z",
-      "updatedAt": "2026-09-01T11:07:25.315Z"
+      "updatedAt": "2026-09-01T11:27:22.364Z"
     }
   ],
   "devices": [
@@ -247,6 +247,30 @@
       "refreshTokenHash": "$2b$10$HsW8oJreB9WXfWfF67XAK.ZkTeW9sl0DsK3Yfj9MCH3oqQVsehHme",
       "lastActive": "2026-09-01T11:07:25.160Z",
       "createdAt": "2026-09-01T11:07:25.160Z"
+    },
+    {
+      "id": "d5170d3b-dbeb-43be-ba28-4bffa578e30c",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "deviceName": "Keerthi iPhone 16 Pro",
+      "deviceType": "ios",
+      "ipAddress": "::ffff:127.0.0.1",
+      "userAgent": "Unknown Client",
+      "isActive": true,
+      "refreshTokenHash": "$2b$10$0rMZ4ZhJ2OGMTfpY6w2WyeUZtxJVPLyHhyztHyKbN4D/aaM4oO5eG",
+      "lastActive": "2026-09-01T11:27:22.121Z",
+      "createdAt": "2026-09-01T11:27:22.121Z"
+    },
+    {
+      "id": "6d790c0b-b347-4b67-99d9-3a9dfe388dea",
+      "userId": "b2222222-2222-2222-2222-222222222222",
+      "deviceName": "Anu iPhone 15",
+      "deviceType": "ios",
+      "ipAddress": "::ffff:127.0.0.1",
+      "userAgent": "Unknown Client",
+      "isActive": true,
+      "refreshTokenHash": "$2b$10$MvcofrBeppUYvAn9vCLY.uQyAvuu/mDJTeCdCQww9UPpiNHVeiA8e",
+      "lastActive": "2026-09-01T11:27:22.215Z",
+      "createdAt": "2026-09-01T11:27:22.215Z"
     }
   ],
   "messages": [
@@ -357,6 +381,18 @@
       "status": "delivered",
       "createdAt": "2026-09-01T11:07:25.274Z",
       "updatedAt": "2026-09-01T11:07:25.274Z"
+    },
+    {
+      "id": "1befa21e-1440-43ef-911c-6d44c390d2ed",
+      "senderId": "a1111111-1111-1111-1111-111111111111",
+      "receiverId": "b2222222-2222-2222-2222-222222222222",
+      "content": "You are the most beautiful part of my life ❤️",
+      "type": "text",
+      "isEdited": false,
+      "isDeleted": false,
+      "status": "delivered",
+      "createdAt": "2026-09-01T11:27:22.324Z",
+      "updatedAt": "2026-09-01T11:27:22.324Z"
     }
   ],
   "reactions": [
@@ -422,10 +458,33 @@
       "userId": "b2222222-2222-2222-2222-222222222222",
       "emoji": "❤️",
       "createdAt": "2026-09-01T11:07:25.284Z"
+    },
+    {
+      "id": "6b065922-3121-4656-b427-170403a7b23f",
+      "messageId": "1befa21e-1440-43ef-911c-6d44c390d2ed",
+      "userId": "b2222222-2222-2222-2222-222222222222",
+      "emoji": "❤️",
+      "createdAt": "2026-09-01T11:27:22.335Z"
     }
   ],
   "calls": [],
   "memories": [
+    {
+      "id": "c0787063-1822-4d15-b00b-c30b5301d127",
+      "title": "Our First Sunset Beach Walk",
+      "description": "Golden hour waves and endless laughs.",
+      "date": "2026-08-28",
+      "location": "Paradise Cove",
+      "category": "photos",
+      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      "mediaType": "image",
+      "isFavorite": true,
+      "notes": "",
+      "createdBy": "a1111111-1111-1111-1111-111111111111",
+      "createdAt": "2026-09-01T11:27:22.353Z",
+      "updatedAt": "2026-09-01T11:27:22.353Z"
+    },
     {
       "id": "ab6020ff-6c19-4a5f-a5e2-06594d8913aa",
       "title": "Our First Sunset Beach Walk",
@@ -573,6 +632,17 @@
   ],
   "loveNotes": [
     {
+      "id": "3c0edf14-6f73-408c-986f-7836b15647ea",
+      "senderId": "b2222222-2222-2222-2222-222222222222",
+      "receiverId": "a1111111-1111-1111-1111-111111111111",
+      "title": "Thank You For Building Our Heaven",
+      "message": "Every moment with you feels like home.",
+      "stationeryStyle": "rose_gold",
+      "date": "2026-09-01",
+      "isOpened": false,
+      "createdAt": "2026-09-01T11:27:22.373Z"
+    },
+    {
       "id": "318a735a-91b1-47f9-bd1e-fad929ded677",
       "senderId": "b2222222-2222-2222-2222-222222222222",
       "receiverId": "a1111111-1111-1111-1111-111111111111",
@@ -673,6 +743,29 @@
     }
   ],
   "timelineMilestones": [
+    {
+      "id": "eb90c3e8-cdfe-4be3-9a16-854152c9a440",
+      "title": "Love Note: Thank You For Building Our Heaven",
+      "description": "My Queen 👑 sent a heartfelt love note.",
+      "date": "2026-09-01",
+      "monthYear": "September 2026",
+      "category": "note",
+      "icon": "mail",
+      "relatedLoveNoteId": "3c0edf14-6f73-408c-986f-7836b15647ea",
+      "createdAt": "2026-09-01T11:27:22.373Z"
+    },
+    {
+      "id": "ccaed916-37c1-4c04-9d4f-f629fb0b20df",
+      "title": "Our First Sunset Beach Walk",
+      "description": "Golden hour waves and endless laughs.",
+      "date": "2026-08-28",
+      "monthYear": "August 2026",
+      "category": "milestone",
+      "icon": "camera",
+      "mediaUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
+      "relatedMemoryId": "c0787063-1822-4d15-b00b-c30b5301d127",
+      "createdAt": "2026-09-01T11:27:22.353Z"
+    },
     {
       "id": "311568bc-08cf-4f8e-a02b-5eb788e07d2d",
       "title": "Love Note: Thank You For Building Our Heaven",
@@ -906,6 +999,26 @@
     }
   },
   "auditLogs": [
+    {
+      "id": "3e11f40b-bd60-43cb-ae76-3ffbd56ff6cc",
+      "userId": "b2222222-2222-2222-2222-222222222222",
+      "userEmail": "iloveyoukeerthi@gmail.com",
+      "action": "USER_LOGIN",
+      "details": "Successful login from Anu iPhone 15 (ios)",
+      "ipAddress": "::ffff:127.0.0.1",
+      "userAgent": "Unknown Client",
+      "createdAt": "2026-09-01T11:27:22.215Z"
+    },
+    {
+      "id": "882c4cd2-ec67-4a61-ad6a-96e119895014",
+      "userId": "a1111111-1111-1111-1111-111111111111",
+      "userEmail": "iloveyouanu@gmail.com",
+      "action": "USER_LOGIN",
+      "details": "Successful login from Keerthi iPhone 16 Pro (ios)",
+      "ipAddress": "::ffff:127.0.0.1",
+      "userAgent": "Unknown Client",
+      "createdAt": "2026-09-01T11:27:22.121Z"
+    },
     {
       "id": "7fc29a9f-9d68-459a-a07f-1f70f8cecbcc",
       "userId": "b2222222-2222-2222-2222-222222222222",

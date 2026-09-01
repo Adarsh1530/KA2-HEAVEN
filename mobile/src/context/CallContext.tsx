@@ -420,7 +420,7 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const rejectCall = (reason = 'declined') => {
+  const rejectCall = async (reason = 'declined') => {
     if (callId && (callerInfo || partner)) {
       const socket = socketService.getSocket();
       socket?.emit(SOCKET_EVENTS.CALL_REJECT, {
@@ -428,6 +428,19 @@ export const CallProvider: React.FC<{ children: React.ReactNode }> = ({ children
         callerId: callerInfo?.id || partner?.id,
         reason,
       });
+
+      try {
+        await api.request('/calls/log', {
+          method: 'POST',
+          body: JSON.stringify({
+            receiverId: partner?.id || callerInfo?.id,
+            callType,
+            status: reason === 'busy' ? 'busy' : reason === 'missed' ? 'missed' : 'rejected',
+            durationSeconds: 0,
+            isRecorded: false,
+          }),
+        });
+      } catch {}
     }
     cleanupCall();
   };

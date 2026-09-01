@@ -3,6 +3,9 @@ import { adminApi } from './services/adminApi';
 import { Sidebar, AdminTab } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardOverview } from './pages/DashboardOverview';
+import { CallLogs } from './pages/CallLogs';
+import { ChatViewer } from './pages/ChatViewer';
+import { MemoryViewer } from './pages/MemoryViewer';
 import { DeviceManagement } from './pages/DeviceManagement';
 import { AuditLogs } from './pages/AuditLogs';
 import { DataMaintenance } from './pages/DataMaintenance';
@@ -75,6 +78,9 @@ export const App: React.FC = () => {
         />
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl w-full mx-auto">
           {activeTab === 'overview' && <DashboardOverview />}
+          {activeTab === 'calls' && <CallLogs />}
+          {activeTab === 'chats' && <ChatViewer />}
+          {activeTab === 'memories' && <MemoryViewer />}
           {activeTab === 'devices' && <DeviceManagement />}
           {activeTab === 'audit' && <AuditLogs />}
           {activeTab === 'maintenance' && <DataMaintenance />}

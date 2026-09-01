@@ -1,6 +1,9 @@
 import React from 'react';
 import {
   LayoutDashboard,
+  Phone,
+  MessageSquare,
+  Heart,
   Smartphone,
   History,
   ExternalLink,
@@ -9,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 
-export type AdminTab = 'overview' | 'devices' | 'audit' | 'maintenance';
+export type AdminTab = 'overview' | 'calls' | 'chats' | 'memories' | 'devices' | 'audit' | 'maintenance';
 
 interface SidebarProps {
   activeTab: AdminTab;
@@ -28,6 +31,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const menuItems: { id: AdminTab; label: string; icon: any }[] = [
     { id: 'overview', label: 'Telemetry & Health', icon: LayoutDashboard },
+    { id: 'calls', label: 'Calls & Recordings', icon: Phone },
+    { id: 'chats', label: 'Chats & Messages', icon: MessageSquare },
+    { id: 'memories', label: 'Memories & Love Vault', icon: Heart },
     { id: 'devices', label: 'Device Sessions', icon: Smartphone },
     { id: 'audit', label: 'Audit Logs', icon: History },
     { id: 'maintenance', label: 'Data & Backups', icon: Database },

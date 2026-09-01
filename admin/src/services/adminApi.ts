@@ -119,6 +119,27 @@ class AdminApiService {
       } as any;
     }
 
+    if (endpoint.includes('/admin/calls')) {
+      const stored = localStorage.getItem('ka2_calls');
+      return { calls: stored ? JSON.parse(stored) : [] } as any;
+    }
+
+    if (endpoint.includes('/admin/chats')) {
+      const stored = localStorage.getItem('ka2_messages');
+      const messages = stored ? JSON.parse(stored) : [];
+      return { messages, totalCount: messages.length } as any;
+    }
+
+    if (endpoint.includes('/admin/memories')) {
+      const mems = localStorage.getItem('ka2_memories');
+      const notes = localStorage.getItem('ka2_love_notes');
+      return {
+        memories: mems ? JSON.parse(mems) : [],
+        loveNotes: notes ? JSON.parse(notes) : [],
+        milestones: [],
+      } as any;
+    }
+
     if (endpoint.includes('/admin/settings')) {
       if (method === 'GET') {
         const stored = localStorage.getItem('ka2_settings');
@@ -246,6 +267,21 @@ class AdminApiService {
       body: JSON.stringify(settings),
     });
     return data.settings;
+  }
+
+  public async getCalls(): Promise<any[]> {
+    const data = await this.request('/admin/calls');
+    return data.calls || [];
+  }
+
+  public async getChats(): Promise<{ messages: any[]; totalCount: number }> {
+    const data = await this.request('/admin/chats');
+    return data;
+  }
+
+  public async getMemories(): Promise<{ memories: any[]; loveNotes: any[]; milestones: any[] }> {
+    const data = await this.request('/admin/memories');
+    return data;
   }
 
   public async getAuditLogs(): Promise<AuditLog[]> {

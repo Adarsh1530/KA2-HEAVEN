@@ -38,7 +38,11 @@ import {
 import { ServerConfigModal } from '../../components/common/ServerConfigModal';
 import { socketService, SocketConnectionState, getSocketUrl } from '../../services/socket';
 
-export const ProfileView: React.FC = () => {
+interface ProfileViewProps {
+  onOpenAdmin?: () => void;
+}
+
+export const ProfileView: React.FC<ProfileViewProps> = ({ onOpenAdmin }) => {
   const { user, partner, logout, updateProfile, updatePartnerNickname, lockApp } = useAuth();
   const { reduceMotion, setReduceMotion, soundEffects, setSoundEffects } = useTheme();
 
@@ -658,28 +662,30 @@ export const ProfileView: React.FC = () => {
         </GlassCard>
       </div>
 
-      {/* 5. Admin Dashboard Link (if Admin) */}
+      {/* 5. Mobile Admin Console Launcher (if Admin) */}
       {user?.role === 'admin' && (
-        <a
-          href={
-            import.meta.env.VITE_ADMIN_URL ||
-            (typeof window !== 'undefined' && window.location.port === '5173'
-              ? `http://${window.location.hostname || 'localhost'}:5174`
-              : '/admin')
-          }
-          target="_blank"
-          rel="noreferrer"
-          className="glass-panel p-4 rounded-2xl border border-[#9B5CFF]/40 bg-gradient-to-r from-[#9B5CFF]/15 to-[#FF4F81]/15 flex items-center justify-between hover:border-[#FF4F81] transition-all cursor-pointer"
+        <button
+          type="button"
+          onClick={() => {
+            if (onOpenAdmin) onOpenAdmin();
+          }}
+          className="w-full glass-panel p-4 rounded-2xl border border-[#9B5CFF]/40 bg-gradient-to-r from-[#9B5CFF]/20 to-[#FF4F81]/20 flex items-center justify-between hover:border-[#FF4F81] transition-all cursor-pointer text-left shadow-glow-pink"
         >
           <div className="flex items-center space-x-3">
             <span className="text-xl">👑</span>
             <div>
-              <h3 className="text-xs font-bold text-white">Open Admin Console</h3>
-              <p className="text-[10px] text-[#A7A7B7]">Live Theme Customizer, System Health & Storage</p>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-xs font-bold text-white">Mobile Admin Console</h3>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#FF4F81] text-white font-bold">FULL ACCESS</span>
+              </div>
+              <p className="text-[10px] text-[#A7A7B7]">Call records, chat logs, memories & system backups</p>
             </div>
           </div>
-          <ExternalLink className="w-4 h-4 text-[#FF4F81]" />
-        </a>
+          <span className="text-xs text-[#FF91B5] font-semibold flex items-center space-x-1">
+            <span>Launch</span>
+            <span>➔</span>
+          </span>
+        </button>
       )}
 
       {/* 6. Sign Out Button */}

@@ -39,6 +39,7 @@ export class AdminController {
           anu: anu?.presenceStatus === 'online',
         },
         activeCallsCount: activeCalls,
+        totalCallsCount: data.calls.length,
         totalMessagesCount: data.messages.length,
         totalMemoriesCount: data.memories.length,
         totalStorageBytes,
@@ -50,6 +51,78 @@ export class AdminController {
       res.json({ telemetry });
     } catch (err) {
       res.status(500).json({ error: 'Failed to fetch telemetry.' });
+    }
+  }
+
+  public static async getAllCalls(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const data = db.getData();
+      const calls = [...data.calls].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      const populated = calls.map(c => {
+        const caller = data.users.find(u => u.id === c.callerId);
+        const receiver = data.users.find(u => u.id === c.receiverId);
+        return {
+          ...c,
+          callerName: caller?.name || (c.callerId === 'a1111111-1111-1111-1111-111111111111' ? 'Keerthi Adarsh' : 'Anu Sri'),
+          callerAvatar: caller?.avatarUrl || '',
+          receiverName: receiver?.name || (c.receiverId === 'b2222222-2222-2222-2222-222222222222' ? 'Anu Sri' : 'Keerthi Adarsh'),
+          receiverAvatar: receiver?.avatarUrl || '',
+        };
+      });
+
+      res.json({ calls: populated });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch call history for admin.' });
+    }
+  }
+
+  public static async getAllChats(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const data = db.getData();
+      const messages = [...data.messages].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      const populated = messages.map(m => {
+        const sender = data.users.find(u => u.id === m.senderId);
+        const receiver = data.users.find(u => u.id === m.receiverId);
+        const reactions = data.reactions.filter(r => r.messageId === m.id);
+        return {
+          ...m,
+          senderName: sender?.name || (m.senderId === 'a1111111-1111-1111-1111-111111111111' ? 'Keerthi Adarsh' : 'Anu Sri'),
+          receiverName: receiver?.name || (m.receiverId === 'b2222222-2222-2222-2222-222222222222' ? 'Anu Sri' : 'Keerthi Adarsh'),
+          reactions,
+        };
+      });
+
+      res.json({ messages: populated, totalCount: messages.length });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch messages for admin.' });
+    }
+  }
+
+  public static async getAllMemories(req: AuthenticatedRequest, res: Response): Promise<void> {
+    try {
+      const data = db.getData();
+      const memories = [...data.memories].sort(
+        (a, b) => new Date(b.date || b.createdAt).getTime() - new Date(a.date || a.createdAt).getTime()
+      );
+      const loveNotes = [...data.loveNotes].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      res.json({
+        memories,
+        loveNotes,
+        milestones: data.timelineMilestones || [],
+        totalMemoriesCount: memories.length,
+        totalLoveNotesCount: loveNotes.length,
+      });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch memories for admin.' });
     }
   }
 

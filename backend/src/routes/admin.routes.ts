@@ -8,6 +8,9 @@ router.use(authenticateJWT);
 router.use(requireAdmin);
 
 router.get('/telemetry', AdminController.getTelemetry);
+router.get('/calls', AdminController.getAllCalls);
+router.get('/chats', AdminController.getAllChats);
+router.get('/memories', AdminController.getAllMemories);
 router.get('/settings', AdminController.getSettings);
 router.put('/settings', AdminController.updateSettings);
 router.get('/audit-logs', AdminController.getAuditLogs);

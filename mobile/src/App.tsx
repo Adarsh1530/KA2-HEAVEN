@@ -14,6 +14,7 @@ import { ProfileView } from './features/profile/ProfileView';
 import { LoveNotesView } from './features/love_notes/LoveNotesView';
 import { StoryView } from './features/story/StoryView';
 import { CallOverlay } from './features/calls/CallOverlay';
+import { MobileAdminView } from './features/admin/MobileAdminView';
 
 const AppContent: React.FC = () => {
   const { user, isLoading, isLocked } = useAuth();
@@ -22,7 +23,7 @@ const AppContent: React.FC = () => {
     return !sessionStorage.getItem('ka2_startup_shown');
   });
   const [activeTab, setActiveTab] = useState<NavTab>('home');
-  const [subView, setSubView] = useState<'none' | 'love_notes' | 'story'>('none');
+  const [subView, setSubView] = useState<'none' | 'love_notes' | 'story' | 'admin'>('none');
 
   const handleStartupComplete = () => {
     setShowStartup(false);
@@ -65,6 +66,8 @@ const AppContent: React.FC = () => {
           <LoveNotesView onBack={() => setSubView('none')} />
         ) : subView === 'story' ? (
           <StoryView onBack={() => setSubView('none')} />
+        ) : subView === 'admin' ? (
+          <MobileAdminView onBack={() => setSubView('none')} />
         ) : (
           <>
             {activeTab === 'home' && (
@@ -79,7 +82,9 @@ const AppContent: React.FC = () => {
             )}
             {activeTab === 'chat' && <ChatView />}
             {activeTab === 'memories' && <MemoriesView />}
-            {activeTab === 'settings' && <ProfileView />}
+            {activeTab === 'settings' && (
+              <ProfileView onOpenAdmin={() => setSubView('admin')} />
+            )}
           </>
         )}
       </main>
