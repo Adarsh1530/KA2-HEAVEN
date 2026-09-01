@@ -71,6 +71,109 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(config.storage.uploadDir));
 
+// Root welcome & status endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>KA² — HEAVEN Realtime API</title>
+      <style>
+        body {
+          background-color: #07070C;
+          color: #FFFFFF;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          margin: 0;
+          padding: 20px;
+          box-sizing: border-box;
+        }
+        .card {
+          background: rgba(16, 16, 25, 0.85);
+          border: 1px solid rgba(255, 79, 129, 0.3);
+          border-radius: 24px;
+          padding: 36px;
+          max-width: 480px;
+          width: 100%;
+          text-align: center;
+          box-shadow: 0 0 40px rgba(255, 79, 129, 0.15);
+        }
+        .monogram {
+          width: 64px;
+          height: 64px;
+          margin: 0 auto 16px;
+          background: linear-gradient(135deg, #9B5CFF, #FF4F81);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          font-weight: 900;
+          color: white;
+          box-shadow: 0 0 20px rgba(255, 79, 129, 0.4);
+        }
+        h1 { margin: 0 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        p { color: #A7A7B7; font-size: 13px; margin: 0 0 24px; }
+        .status {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 14px;
+          background: rgba(66, 211, 146, 0.15);
+          border: 1px solid rgba(66, 211, 146, 0.3);
+          border-radius: 20px;
+          color: #42D392;
+          font-size: 12px;
+          font-weight: 600;
+          margin-bottom: 24px;
+        }
+        .dot { width: 8px; height: 8px; background: #42D392; border-radius: 50%; }
+        .links { display: flex; flex-direction: column; gap: 10px; }
+        a {
+          display: block;
+          padding: 12px 18px;
+          border-radius: 14px;
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 600;
+          transition: all 0.2s;
+        }
+        .btn-primary {
+          background: linear-gradient(135deg, #9B5CFF, #FF4F81);
+          color: white;
+        }
+        .btn-secondary {
+          background: rgba(255, 255, 255, 0.05);
+          color: #FF91B5;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        a:hover { opacity: 0.9; transform: translateY(-1px); }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="monogram">KA²</div>
+        <h1>KA² — HEAVEN Backend Server</h1>
+        <p>Realtime WebSockets, WebRTC Signaling & Database API</p>
+        <div class="status">
+          <span class="dot"></span> Realtime Engine Online
+        </div>
+        <div class="links">
+          <a href="https://ka2-heaven.vercel.app" class="btn-primary">Open Mobile App &rarr;</a>
+          <a href="https://ka2-heaven.vercel.app/admin" class="btn-secondary">Open Admin Console &rarr;</a>
+          <a href="/api/health" class="btn-secondary">View Health JSON &rarr;</a>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
 // Health check route
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({
